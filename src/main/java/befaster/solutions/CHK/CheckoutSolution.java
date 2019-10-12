@@ -1,9 +1,12 @@
 package befaster.solutions.CHK;
 
-import befaster.runner.SolutionNotImplementedException;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class CheckoutSolution {
-    public Integer checkout(String skus) {
-        throw new SolutionNotImplementedException();
-    }
+  public Integer checkout(String skus) {
+      if (isBlank(skus)) return -1;
+
+      return skus.length();
+  }
 }
+
