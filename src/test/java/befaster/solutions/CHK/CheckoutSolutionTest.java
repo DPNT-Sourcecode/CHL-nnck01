@@ -65,13 +65,15 @@ public class CheckoutSolutionTest {
   }
 
   @Test
-  //assumption???
   public void shouldDependOnItemsOrder() {
-    //  id = CHL_R1_022, req = checkout("ABCDABCD"), resp = 8
-    //  id = CHL_R1_023, req = checkout("BABDDCAC"), resp = 8
-    //  id = CHL_R1_001, req = checkout("ABCDCBAABCABBAAA"), resp = 16
-//    assertThat(checkoutSolution.checkout("ABCDABCD"), is(180));
+      //{"method":"checkout","params":["ABCDABCD"],"id":"CHL_R1_022"}, expected: 215, got: 230
+      //{"method":"checkout","params":["BABDDCAC"],"id":"CHL_R1_023"}, expected: 215, got: 230
+      //{"method":"checkout","params":["ABCDCBAABCABBAAA"],"id":"CHL_R1_001"}, expected: 505, got: 540//    assertThat(checkoutSolution.checkout("ABCDABCD"), is(180));
+    assertThat(checkoutSolution.checkout("ABCDABCD"), is(215));
+    assertThat(checkoutSolution.checkout("BABDDCAC"), is(215));
+    assertThat(checkoutSolution.checkout("ABCDCBAABCABBAAA"), is(505));
 //    assertThat(checkoutSolution.checkout("BABDDCAC"), is(180));
 //    assertThat(checkoutSolution.checkout("ABCDCBAABCABBAAA"), is(180));
   }
 }
+

@@ -2,6 +2,7 @@ package befaster.solutions.CHK;
 
 import com.google.common.collect.ImmutableMap;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -28,23 +29,24 @@ public class CheckoutSolution {
     int total = 0;
     char currentLetter = '_';
     int currentLettersCount = 0;
+
+    final Map<Character, Integer> lettersCount = new HashMap<>();
     for (char letter : letters) {
       if (!validLetter(letter)) return -1;
 
-      if (currentLetter == letter) {
-        currentLettersCount++;
-        continue;
-      }
+      lettersCount.compute(letter, (l, count) -> {
+        if (count == null) return 1;
 
-      final CountToCost countReminderToSpecialOffersSum = specialOffersSum(currentLetter, currentLettersCount);
-      total += countReminderToSpecialOffersSum.cost + usualOffersSum(currentLetter, countReminderToSpecialOffersSum.count);
-
-      currentLetter = letter;
-      currentLettersCount = 1;
+        return count + 1;
+      });
     }
 
-    final CountToCost countReminderToSpecialOffersSum = specialOffersSum(currentLetter, currentLettersCount);
-    total += countReminderToSpecialOffersSum.cost + usualOffersSum(currentLetter, countReminderToSpecialOffersSum.count);
+    lettersCount
+            .entrySet()
+            .stream((letter, count) -> {
+              final CountToCost countReminderToSpecialOffersSum = specialOffersSum(currentLetter, currentLettersCount);
+              return countReminderToSpecialOffersSum.cost + usualOffersSum(currentLetter, countReminderToSpecialOffersSum.count);
+            })
 
     return total;
   }
@@ -79,3 +81,4 @@ public class CheckoutSolution {
     }
   }
 }
+
