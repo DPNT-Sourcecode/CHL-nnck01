@@ -1,7 +1,7 @@
 package befaster.solutions.SUM;
 
 @SuppressWarnings("unused")
-public class SumSolution {
+public final class SumSolution {
 
   /**
    * Returns sums of two integers, each of the in [0, 100].
@@ -11,7 +11,7 @@ public class SumSolution {
    * @param y
    * @return x + y
    */
-  public int compute(int x, int y) {
+  public final int compute(int x, int y) {
     if (x < 0 || y < 0 || x > 100 || y > 100)
       throw new IllegalArgumentException();
 
@@ -19,5 +19,6 @@ public class SumSolution {
   }
 
 }
+
 
 
