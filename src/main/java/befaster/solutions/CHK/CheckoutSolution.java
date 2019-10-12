@@ -66,6 +66,7 @@ public class CheckoutSolution {
   }
 
   interface SpecialOffer {
+    boolean applicable(Map<Character, Integer> letters);
     LettersWithAmount applyTo(LettersWithAmount lettersWithAmount);
   }
 
@@ -80,6 +81,11 @@ public class CheckoutSolution {
 
     static DiscountOffer by(LetterCount letterCount, int discount) {
       return new DiscountOffer(letterCount, discount);
+    }
+
+    @Override
+    public boolean applicable(Map<Character, Integer> letters) {
+      return false;
     }
 
     @Override
@@ -130,4 +136,5 @@ public class CheckoutSolution {
     }
   }
 }
+
 
