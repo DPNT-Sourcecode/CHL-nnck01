@@ -9,9 +9,13 @@ public class HelloSolutionTest {
   private HelloSolution helloSolution = new HelloSolution();
 
   @Test
-  public void shouldReturnHelloDespiteTheInput() {
-    assertThat(helloSolution.hello(null), is("hello"));
-    assertThat(helloSolution.hello(""), is("hello"));
+  public void shouldReturnHelloWorldToCraftsman() {
+    assertThat(helloSolution.hello("Craftsman"), is("Hello, World!"));
+  }
+  @Test
+  public void shouldReturnHelloWorldToMtX() {
+    assertThat(helloSolution.hello("Mr. X"), is("Hello, World!"));
   }
 }
+
 
