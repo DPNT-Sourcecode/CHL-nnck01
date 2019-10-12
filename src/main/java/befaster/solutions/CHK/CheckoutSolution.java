@@ -5,8 +5,6 @@ import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 public class CheckoutSolution {
 
   private final Map<Character, Integer> usualCost = ImmutableMap.of(
@@ -41,12 +39,10 @@ public class CheckoutSolution {
       });
     }
 
-    lettersCount
-            .entrySet()
-            .stream((letter, count) -> {
-              final CountToCost countReminderToSpecialOffersSum = specialOffersSum(currentLetter, currentLettersCount);
-              return countReminderToSpecialOffersSum.cost + usualOffersSum(currentLetter, countReminderToSpecialOffersSum.count);
-            })
+    for (final Map.Entry<Character, Integer> letterToCount : lettersCount.entrySet()) {
+      final CountToCost countReminderToSpecialOffersSum = specialOffersSum(letterToCount.getKey(), letterToCount.getValue());
+      total += countReminderToSpecialOffersSum.cost + usualOffersSum(letterToCount.getKey(), countReminderToSpecialOffersSum.count);
+    }
 
     return total;
   }
@@ -81,4 +77,5 @@ public class CheckoutSolution {
     }
   }
 }
+
 
