@@ -67,6 +67,7 @@ public class CheckoutSolution {
 
   interface SpecialOffer {
     boolean applicable(Map<Character, Integer> letters);
+
     LettersWithAmount applyTo(LettersWithAmount lettersWithAmount);
   }
 
@@ -85,12 +86,17 @@ public class CheckoutSolution {
 
     @Override
     public boolean applicable(Map<Character, Integer> letters) {
-      return false;
+      return letters.getOrDefault(letterCount.letter, 0) >= letterCount.count;
     }
 
     @Override
     public LettersWithAmount applyTo(LettersWithAmount lettersWithAmount) {
-      return null;
+      final Integer count = lettersWithAmount.lettersCount.get(letterCount.letter);
+      if (count == null || count < letterCount.count) return lettersWithAmount;
+
+      int timesApplicable = count / letterCount.count;
+      int totalDiscount = timesApplicable * discount;
+      return LettersWithAmount.by(lettersWithAmount.amount - totalDiscount, );
     }
   }
 
@@ -101,6 +107,16 @@ public class CheckoutSolution {
     private LettersWithAmount(int amount, Map<Character, Integer> lettersCount) {
       this.amount = amount;
       this.lettersCount = lettersCount;
+    }
+
+    LettersWithAmount minus(LetterCount letterCount) {
+      final Integer count = lettersCount.getOrDefault(letterCount.letter, 0);
+      if (count < letterCount.count)
+        throw new IllegalArgumentException("Can not substract LetterCount: " + letterCount);
+
+      
+      lettersCount.put(letterCount.letter, count - letterCount.count);
+      return new LettersWithAmount()
     }
 
     static LettersWithAmount by(int amount, Map<Character, Integer> lettersCount) {
@@ -136,5 +152,6 @@ public class CheckoutSolution {
     }
   }
 }
+
 
 
