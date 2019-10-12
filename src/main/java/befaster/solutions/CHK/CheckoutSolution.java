@@ -19,7 +19,7 @@ public class CheckoutSolution {
 
   private final Map<Character, CountToCost> specialOffers = ImmutableMap.of(
           'A', CountToCost.by(5, 200),
-          'A', CountToCost.by(3, 130),
+//          'A', CountToCost.by(3, 130),
           'B', CountToCost.by(2, 45)
   );
 
@@ -221,4 +221,5 @@ public class CheckoutSolution {
     }
   }
 }
+
 
