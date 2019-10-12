@@ -3,7 +3,7 @@ package befaster.solutions.CHK;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class CheckoutSolutionTest {
   private final CheckoutSolution checkoutSolution = new CheckoutSolution();
@@ -15,36 +15,64 @@ public class CheckoutSolutionTest {
 
   @Test
   public void shouldReturnZeroForEmptyInput() {
-    //id = CHL_R1_002, req = checkout(""), resp = -1
+    //    - {"method":"checkout","params":[""],"id":"CHL_R1_002"}, expected: 0, got: -1
     assertThat(checkoutSolution.checkout(""), is(0));
+    //assumption???
+    assertThat(checkoutSolution.checkout("a"), is(-1));
+    assertThat(checkoutSolution.checkout("-"), is(-1));
+    //  id = CHL_R1_009, req = checkout("ABCa"), resp = 4
+    //  id = CHL_R1_010, req = checkout("AxA"), resp = 3
+    assertThat(checkoutSolution.checkout("ABCa"), is(-1));
+    assertThat(checkoutSolution.checkout("AxA"), is(-1));
   }
 
-//  id = CHL_R1_003, req = checkout("A"), resp = 1
-//  id = CHL_R1_004, req = checkout("B"), resp = 1
-//  id = CHL_R1_005, req = checkout("C"), resp = 1
-//  id = CHL_R1_006, req = checkout("D"), resp = 1
-//  id = CHL_R1_007, req = checkout("a"), resp = 1
-//  id = CHL_R1_008, req = checkout("-"), resp = 1
-//  id = CHL_R1_009, req = checkout("ABCa"), resp = 4
-//  id = CHL_R1_010, req = checkout("AxA"), resp = 3
-//  id = CHL_R1_011, req = checkout("ABCD"), resp = 4
-//  id = CHL_R1_012, req = checkout("A"), resp = 1
-//  id = CHL_R1_013, req = checkout("AA"), resp = 2
-//  id = CHL_R1_014, req = checkout("AAA"), resp = 3
-//  id = CHL_R1_015, req = checkout("AAAA"), resp = 4
-//  id = CHL_R1_016, req = checkout("AAAAA"), resp = 5
-//  id = CHL_R1_017, req = checkout("AAAAAA"), resp = 6
-//  id = CHL_R1_018, req = checkout("B"), resp = 1
-//  id = CHL_R1_019, req = checkout("BB"), resp = 2
-//  id = CHL_R1_020, req = checkout("BBB"), resp = 3
-//  id = CHL_R1_021, req = checkout("BBBB"), resp = 4
-//  id = CHL_R1_022, req = checkout("ABCDABCD"), resp = 8
-//  id = CHL_R1_023, req = checkout("BABDDCAC"), resp = 8
-//  id = CHL_R1_024, req = checkout("AAABB"), resp = 5
-//  id = CHL_R1_001, req = checkout("ABCDCBAABCABBAAA"), resp = 16
   @Test
-  public void shouldReturnItemCost__IfTableContainsItem() {
+  public void shouldReturnItemCost__IfTableContainsItemAndNoSpecialOfferApplicable() {
+    //    - {"method":"checkout","params":["A"],"id":"CHL_R1_003"}, expected: 50, got: 1
+    //    - {"method":"checkout","params":["B"],"id":"CHL_R1_004"}, expected: 30, got: 1
+    //  id = CHL_R1_013, req = checkout("AA"), resp = 2
     assertThat(checkoutSolution.checkout("A"), is(50));
-    assertThat(checkoutSolution.checkout("A"), is(50));
+    assertThat(checkoutSolution.checkout("AA"), is(100));
+    assertThat(checkoutSolution.checkout("B"), is(30));
+    assertThat(checkoutSolution.checkout("C"), is(20));
+    assertThat(checkoutSolution.checkout("D"), is(15));
+  }
+
+  @Test
+  public void shouldSumItemsCosts() {
+    //  id = CHL_R1_011, req = checkout("ABCD"), resp = 4
+    assertThat(checkoutSolution.checkout("ABCD"), is(115));
+  }
+
+  @Test
+  public void shouldReturnItemCostWithSpecialOffer__IfApplicable() {
+    //  id = CHL_R1_014, req = checkout("AAA"), resp = 3
+    //  id = CHL_R1_019, req = checkout("BB"), resp = 2
+    //  id = CHL_R1_017, req = checkout("AAAAAA"), resp = 6
+    //  id = CHL_R1_021, req = checkout("BBBB"), resp = 4
+    assertThat(checkoutSolution.checkout("AAA"), is(130));
+    assertThat(checkoutSolution.checkout("AAAAAA"), is(260));
+    assertThat(checkoutSolution.checkout("BB"), is(45));
+    assertThat(checkoutSolution.checkout("BBBB"), is(90));
+  }
+
+  @Test
+  public void shouldSumSpecialOfferAndUsualCost__IfApplicable() {
+    assertThat(checkoutSolution.checkout("AAAA"), is(180));
+    assertThat(checkoutSolution.checkout("AAAAA"), is(230));
+    assertThat(checkoutSolution.checkout("BBB"), is(75));
+    assertThat(checkoutSolution.checkout("AAABB"), is(175));
+  }
+
+  @Test
+  //assumption???
+  public void shouldDependOnItemsOrder() {
+    //  id = CHL_R1_022, req = checkout("ABCDABCD"), resp = 8
+    //  id = CHL_R1_023, req = checkout("BABDDCAC"), resp = 8
+    //  id = CHL_R1_001, req = checkout("ABCDCBAABCABBAAA"), resp = 16
+    assertThat(checkoutSolution.checkout("ABCDABCD"), is(180));
+    assertThat(checkoutSolution.checkout("BABDDCAC"), is(180));
+    assertThat(checkoutSolution.checkout("ABCDCBAABCABBAAA"), is(180));
   }
 }
+
