@@ -21,11 +21,9 @@ public class CheckoutSolution {
   );
 
   public Integer checkout(String skus) {
-    if (isBlank(skus)) return -1;
+    if (skus == null) return -1;
 
     final char[] letters = skus.toCharArray();
-
-    final int[] current;
 
     int total = 0;
     char currentLetter = '_';
@@ -44,6 +42,9 @@ public class CheckoutSolution {
       currentLetter = letter;
       currentLettersCount = 1;
     }
+
+    final CountToCost countReminderToSpecialOffersSum = specialOffersSum(currentLetter, currentLettersCount);
+    total += countReminderToSpecialOffersSum.cost + usualOffersSum(currentLetter, countReminderToSpecialOffersSum.count);
 
     return total;
   }
@@ -78,5 +79,6 @@ public class CheckoutSolution {
     }
   }
 }
+
 
 
