@@ -19,6 +19,3 @@ public final class SumSolution {
   }
 
 }
-
-
-
