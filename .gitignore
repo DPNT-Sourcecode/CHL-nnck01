@@ -1,0 +1,25 @@
+# ~~~~~~~~~ Global ~~~~~~~~~
+
+# Ignore all dot folders
+.*/
+
+# ~~~~~~~~~ Language specific ~~~~~~~~~
+*.class
+hs_err_pid*
+build/
+out/
+target/
+
+# ~~~~~~~~~ IDE specific ~~~~~~~~~
+
+# Idea
+*.iml
+
+# ~~~~~~~~~ Accelerate ~~~~~~~~~
+challenges/
+config/
+coverage/
+coverage.tdl
+jre/
+record/
+
