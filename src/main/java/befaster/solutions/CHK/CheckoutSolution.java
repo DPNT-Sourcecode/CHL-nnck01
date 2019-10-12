@@ -1,8 +1,10 @@
 package befaster.solutions.CHK;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CheckoutSolution {
@@ -19,6 +21,13 @@ public class CheckoutSolution {
           'A', CountToCost.by(5, 200),
           'A', CountToCost.by(3, 130),
           'B', CountToCost.by(2, 45)
+  );
+
+  private final Map<Character, List<SpecialOffer>> offers = ImmutableMap.of(
+          'A', ImmutableList.of(
+                  DiscountOffer.by(LetterCount.by(3, 'A'), 20),
+                  DiscountOffer.by(LetterCount.by(5, 'A'), 50)
+          )
   );
 
   public Integer checkout(String skus) {
@@ -66,7 +75,7 @@ public class CheckoutSolution {
   }
 
   interface SpecialOffer {
-    boolean applicable(Map<Character, Integer> letters);
+    LetterCountWithCost toLetterCountWithCost();
 
     LettersWithAmount applyTo(LettersWithAmount lettersWithAmount);
   }
@@ -85,8 +94,15 @@ public class CheckoutSolution {
     }
 
     @Override
-    public boolean applicable(Map<Character, Integer> letters) {
-      return letters.getOrDefault(letterCount.letter, 0) >= letterCount.count;
+    public LetterCountWithCost toLetterCountWithCost() {
+      return LetterCountWithCost.by(letterCount, discount);
+    }
+
+    public DiscountOffer times(int times) {
+      return DiscountOffer.by(
+              LetterCount.by(letterCount.count * times, letterCount.letter),
+              discount * times
+      );
     }
 
     @Override
@@ -94,9 +110,42 @@ public class CheckoutSolution {
       final Integer count = lettersWithAmount.lettersCount.get(letterCount.letter);
       if (count == null || count < letterCount.count) return lettersWithAmount;
 
-      int timesApplicable = count / letterCount.count;
-      int totalDiscount = timesApplicable * discount;
-      return LettersWithAmount.by(lettersWithAmount.amount - totalDiscount, );
+      int times = count / letterCount.count;
+      return lettersWithAmount.minus(times(times).toLetterCountWithCost());
+    }
+  }
+
+  private static final class ExtraItemOffer implements SpecialOffer {
+    final LetterCount letterCount;
+    final LetterCountWithCost extraItems;
+
+    private ExtraItemOffer(LetterCount letterCount, LetterCountWithCost extraItems) {
+      this.letterCount = letterCount;
+      this.extraItems = extraItems;
+    }
+
+    static ExtraItemOffer by(LetterCount letterCount, LetterCountWithCost extraItems) {
+      return new ExtraItemOffer(letterCount, extraItems);
+    }
+
+    public LetterCountWithCost toLetterCountWithCost() {
+      return LetterCountWithCost.by(letterCount, extraItems.cost);
+    }
+
+    public ExtraItemOffer times(int times) {
+      return ExtraItemOffer.by(
+              LetterCount.by(letterCount.count * times, letterCount.letter),
+              LetterCountWithCost.by(extraItems.letterCount, extraItems.cost * times)
+      );
+    }
+
+    @Override
+    public LettersWithAmount applyTo(LettersWithAmount lettersWithAmount) {
+      final Integer count = lettersWithAmount.lettersCount.get(letterCount.letter);
+      if (count == null || count < letterCount.count) return lettersWithAmount;
+
+      int times = count / letterCount.count;
+      return lettersWithAmount.minus(times(times).toLetterCountWithCost());
     }
   }
 
@@ -109,14 +158,20 @@ public class CheckoutSolution {
       this.lettersCount = lettersCount;
     }
 
-    LettersWithAmount minus(LetterCount letterCount) {
-      final Integer count = lettersCount.getOrDefault(letterCount.letter, 0);
-      if (count < letterCount.count)
-        throw new IllegalArgumentException("Can not substract LetterCount: " + letterCount);
+    LettersWithAmount minus(LetterCountWithCost letterCountWithCost) {
+      final char letter = letterCountWithCost.letterCount.letter;
+      final int letterCount = letterCountWithCost.letterCount.count;
 
-      
-      lettersCount.put(letterCount.letter, count - letterCount.count);
-      return new LettersWithAmount()
+      final Integer count = lettersCount.getOrDefault(letter, 0);
+      if (count < letterCount)
+        throw new IllegalArgumentException("Can not subtract LetterCountWithCost: " + letterCountWithCost);
+
+      final Map<Character, Integer> newLettersCount = ImmutableMap.<Character, Integer>builder()
+              .putAll(lettersCount)
+              .put(letter, count - letterCount)
+              .build();
+
+      return new LettersWithAmount(amount - letterCountWithCost.cost, newLettersCount);
     }
 
     static LettersWithAmount by(int amount, Map<Character, Integer> lettersCount) {
@@ -138,6 +193,20 @@ public class CheckoutSolution {
     }
   }
 
+  private static final class LetterCountWithCost {
+    final LetterCount letterCount;
+    final int cost;
+
+    private LetterCountWithCost(LetterCount letterCount, int cost) {
+      this.letterCount = letterCount;
+      this.cost = cost;
+    }
+
+    private static LetterCountWithCost by(LetterCount letterCount, int cost) {
+      return new LetterCountWithCost(letterCount, cost);
+    }
+  }
+
   private static final class CountToCost {
     final int count;
     final int cost;
@@ -152,3 +221,4 @@ public class CheckoutSolution {
     }
   }
 }
+
