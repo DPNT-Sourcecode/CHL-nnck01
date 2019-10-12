@@ -9,7 +9,3 @@ public class HelloSolution {
         return "Hello, " + defaultString(friendName) + "!";
     }
 }
-
-
-
-

@@ -28,7 +28,3 @@ public class HelloSolutionTest {
     assertThat(helloSolution.hello("Mr. X"), is("Hello, Mr. X!"));
   }
 }
-
-
-
-
