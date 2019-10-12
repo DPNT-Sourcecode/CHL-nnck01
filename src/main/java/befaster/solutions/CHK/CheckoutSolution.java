@@ -38,7 +38,11 @@ public class CheckoutSolution {
         continue;
       }
 
-      final CountToCost specialOffersSumAnd = specialOffersSum(currentLetter, currentLettersCount);
+      final CountToCost countReminderToSpecialOffersSum = specialOffersSum(currentLetter, currentLettersCount);
+      total += countReminderToSpecialOffersSum.cost + usualOffersSum(currentLetter, countReminderToSpecialOffersSum.count);
+
+      currentLetter = letter;
+      currentLettersCount = 1;
     }
 
     return total;
@@ -57,7 +61,7 @@ public class CheckoutSolution {
   }
 
   private int usualOffersSum(char letter, int lettersCount) {
-    return usualCost.get(letter) * lettersCount;
+    return usualCost.getOrDefault(letter, 0) * lettersCount;
   }
 
   private static final class CountToCost {
@@ -74,4 +78,5 @@ public class CheckoutSolution {
     }
   }
 }
+
 
