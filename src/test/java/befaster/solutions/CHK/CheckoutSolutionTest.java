@@ -17,7 +17,6 @@ public class CheckoutSolutionTest {
   public void shouldReturnZeroForEmptyInput() {
     //    - {"method":"checkout","params":[""],"id":"CHL_R1_002"}, expected: 0, got: -1
     assertThat(checkoutSolution.checkout(""), is(0));
-    //assumption???
     assertThat(checkoutSolution.checkout("a"), is(-1));
     assertThat(checkoutSolution.checkout("-"), is(-1));
     //  id = CHL_R1_009, req = checkout("ABCa"), resp = 4
@@ -36,6 +35,7 @@ public class CheckoutSolutionTest {
     assertThat(checkoutSolution.checkout("B"), is(30));
     assertThat(checkoutSolution.checkout("C"), is(20));
     assertThat(checkoutSolution.checkout("D"), is(15));
+    assertThat(checkoutSolution.checkout("E"), is(40));
   }
 
   @Test
@@ -51,7 +51,7 @@ public class CheckoutSolutionTest {
     //  id = CHL_R1_017, req = checkout("AAAAAA"), resp = 6
     //  id = CHL_R1_021, req = checkout("BBBB"), resp = 4
     assertThat(checkoutSolution.checkout("AAA"), is(130));
-    assertThat(checkoutSolution.checkout("AAAAAA"), is(260));
+    assertThat(checkoutSolution.checkout("AAAAAA"), is(250));
     assertThat(checkoutSolution.checkout("BB"), is(45));
     assertThat(checkoutSolution.checkout("BBBB"), is(90));
   }
@@ -59,20 +59,31 @@ public class CheckoutSolutionTest {
   @Test
   public void shouldSumSpecialOfferAndUsualCost__IfApplicable() {
     assertThat(checkoutSolution.checkout("AAAA"), is(180));
-    assertThat(checkoutSolution.checkout("AAAAA"), is(230));
+    assertThat(checkoutSolution.checkout("AAAAA"), is(200));
     assertThat(checkoutSolution.checkout("BBB"), is(75));
     assertThat(checkoutSolution.checkout("AAABB"), is(175));
   }
 
   @Test
   public void shouldDependOnItemsOrder() {
-      //{"method":"checkout","params":["ABCDABCD"],"id":"CHL_R1_022"}, expected: 215, got: 230
-      //{"method":"checkout","params":["BABDDCAC"],"id":"CHL_R1_023"}, expected: 215, got: 230
-      //{"method":"checkout","params":["ABCDCBAABCABBAAA"],"id":"CHL_R1_001"}, expected: 505, got: 540//    assertThat(checkoutSolution.checkout("ABCDABCD"), is(180));
+    //{"method":"checkout","params":["ABCDABCD"],"id":"CHL_R1_022"}, expected: 215, got: 230
+    //{"method":"checkout","params":["BABDDCAC"],"id":"CHL_R1_023"}, expected: 215, got: 230
+    //{"method":"checkout","params":["ABCDCBAABCABBAAA"],"id":"CHL_R1_001"}, expected: 505, got: 540//    assertThat(checkoutSolution.checkout("ABCDABCD"), is(180));
     assertThat(checkoutSolution.checkout("ABCDABCD"), is(215));
     assertThat(checkoutSolution.checkout("BABDDCAC"), is(215));
     assertThat(checkoutSolution.checkout("ABCDCBAABCABBAAA"), is(505));
-//    assertThat(checkoutSolution.checkout("BABDDCAC"), is(180));
-//    assertThat(checkoutSolution.checkout("ABCDCBAABCABBAAA"), is(180));
+  }
+
+  @Test
+  public void shouldHandleSpecialOffersWithExtraItems() {
+    //todo (assumption): free B affect minus to total
+    assertThat(checkoutSolution.checkout("EE"), is(40 * 2 - 30));
+  }
+
+  @Test
+  public void shouldCombineOffersStartingFromTheBest() {
+    assertThat(checkoutSolution.checkout("AAAAAA"), is(250));
+    assertThat(checkoutSolution.checkout("AAAAAAAA"), is(330));
   }
 }
+
