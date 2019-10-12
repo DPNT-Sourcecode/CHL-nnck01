@@ -75,5 +75,3 @@ public class CheckoutSolutionTest {
 //    assertThat(checkoutSolution.checkout("ABCDCBAABCABBAAA"), is(180));
   }
 }
-
-
