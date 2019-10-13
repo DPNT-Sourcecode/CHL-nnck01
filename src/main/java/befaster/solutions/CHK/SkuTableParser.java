@@ -40,10 +40,14 @@ public class SkuTableParser {
     final char item = trim(params[1]).charAt(0);
     final int price = createInteger(trim(params[2]));
 
-    final String specialOffers = trim(params[3]);
-    if (specialOffers.isEmpty()) return UsualCost.by(ItemCount.by(item, 1), price);
+    final String specialOffersLine = trim(params[3]);
+    if (specialOffersLine.isEmpty()) return UsualCost.by(ItemCount.by(item, 1), price);
+
+    final List<String> specialOffers = Arrays.asList(specialOffersLine.split(","));
+
     return null;
   }
 }
+
 
 

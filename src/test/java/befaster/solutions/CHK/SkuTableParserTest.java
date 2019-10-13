@@ -50,6 +50,19 @@ public class SkuTableParserTest {
     assertThat(offers, hasItem(UsualCost.by(ItemCount.by('C', 1), 20)));
   }
 
+  @Test
+  public void shouldParseItemWithDiscountOffer() {
+    final List<Offer> offers = skuTableParser.parse(
+        "+------+-------+------------------------+\n" +
+            "| Item | Price | Special offers         |\n" +
+            "+------+-------+------------------------+\n" +
+            "| B    | 30    | 2B for 45              |\n" +
+            "+------+-------+------------------------+"
+    );
+    assertThat(offers, hasItem(UsualCost.by(ItemCount.by('C', 1), 20)));
+  }
+
 }
+
 
 
