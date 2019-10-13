@@ -66,7 +66,7 @@ public class CheckoutSolution {
     Offer times(int times);
   }
 
-  private static final class UsualCost implements Offer {
+  public static final class UsualCost implements Offer {
     final ItemCount letteCount;
     final int cost;
 
@@ -98,7 +98,7 @@ public class CheckoutSolution {
     }
   }
 
-  private static final class DiscountOffer implements Offer {
+  public static final class DiscountOffer implements Offer {
     final ItemCount itemsCount;
     final int discount;
 
@@ -134,7 +134,7 @@ public class CheckoutSolution {
     }
   }
 
-  private static final class ExtraItemOffer implements Offer {
+  public static final class ExtraItemOffer implements Offer {
     final ItemsCountWithCost itemsCountWithCost;
     final ItemsCountWithCost extraItemsWithCost;
 
@@ -177,7 +177,7 @@ public class CheckoutSolution {
     }
   }
 
-  private static final class FreeItemOffer implements Offer {
+  public static final class FreeItemOffer implements Offer {
     final ItemsCountWithCost itemCountWithCost;
     final int freeCount;
 
@@ -352,3 +352,4 @@ public class CheckoutSolution {
     }
   }
 }
+
