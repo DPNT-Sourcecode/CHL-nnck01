@@ -51,10 +51,11 @@ public class SkuTableParser {
         .map(StringUtils::trim)
         .map(line -> {
           if (line.contains("for")) {
-            final String[] discountLine = line.split("for");
-            final String count = discountLine[0].trim();
-            final String specialPrice = discountLine[1].trim();
-            return DiscountOffer.by(ItemCount.by(item, createInteger(count.substring(0, count.length() - 1))), createInteger(specialPrice));
+            return parseDiscountOffer(item, line);
+          }
+
+          if (line.contains("for")) {
+            return parseDiscountOffer(item, line);
           }
 
           return null;
@@ -66,7 +67,15 @@ public class SkuTableParser {
         .add(usualOffer)
         .build();
   }
+
+  private DiscountOffer parseDiscountOffer(char item, String line) {
+    final String[] discountLine = line.split("for");
+    final String count = discountLine[0].trim();
+    final String specialPrice = discountLine[1].trim();
+    return DiscountOffer.by(ItemCount.by(item, createInteger(count.substring(0, count.length() - 1))), createInteger(specialPrice));
+  }
 }
+
 
 
 
