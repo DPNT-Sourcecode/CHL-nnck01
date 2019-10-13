@@ -11,12 +11,12 @@ interface Offer {
 
   Offer times(int times);
 
-  final class UsualCost implements Offer, Comparable<UsualCost>{
-    public final ItemCount letteCount;
-    public final int cost;
+  final class UsualCost implements Offer, Comparable<UsualCost> {
+    final ItemCount itemCount;
+    final int cost;
 
-    private UsualCost(ItemCount letteCount, int cost) {
-      this.letteCount = letteCount;
+    private UsualCost(ItemCount itemCount, int cost) {
+      this.itemCount = itemCount;
       this.cost = cost;
     }
 
@@ -26,12 +26,12 @@ interface Offer {
 
     @Override
     public ItemsCountWithCost toItemsCountWithCost() {
-      return ItemsCountWithCost.by(letteCount.item, letteCount.count, cost);
+      return ItemsCountWithCost.by(itemCount.item, itemCount.count, cost);
     }
 
     @Override
     public ItemsWithAmount applyTo(ItemsWithAmount itemsWithAmount) {
-      final Integer count = itemsWithAmount.itemsCount.getOrDefault(letteCount.item, 0);
+      final Integer count = itemsWithAmount.itemsCount.getOrDefault(itemCount.item, 0);
       if (count == 0) return itemsWithAmount;
 
       return itemsWithAmount.minus(times(count).toItemsCountWithCost());
@@ -39,12 +39,15 @@ interface Offer {
 
     @Override
     public Offer times(int times) {
-      return UsualCost.by(letteCount.times(times), cost * times);
+      return UsualCost.by(itemCount.times(times), cost * times);
     }
 
     @Override
-    public int compareTo(UsualCost o) {
-      return 0;
+    public int compareTo(UsualCost other) {
+      if (itemCount.item != other.itemCount.item)
+        return itemCount.item - other.itemCount.item;
+
+      return itemCount.count - other.itemCount.count;
     }
 
     @Override
@@ -53,26 +56,26 @@ interface Offer {
       if (!(o instanceof UsualCost)) return false;
       UsualCost usualCost = (UsualCost) o;
       return cost == usualCost.cost &&
-          Objects.equals(letteCount, usualCost.letteCount);
+          Objects.equals(itemCount, usualCost.itemCount);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(letteCount, cost);
+      return Objects.hash(itemCount, cost);
     }
 
     @Override
     public String toString() {
       return "UsualCost{" +
-          "letteCount=" + letteCount +
+          "letteCount=" + itemCount +
           ", cost=" + cost +
           '}';
     }
   }
 
   final class DiscountOffer implements Offer, Comparable<DiscountOffer> {
-    public final ItemCount itemsCount;
-    public final int price;
+    final ItemCount itemsCount;
+    final int price;
 
     private DiscountOffer(ItemCount itemsCount, int price) {
       this.itemsCount = itemsCount;
@@ -209,8 +212,8 @@ interface Offer {
   }
 
   final class FreeItemOffer implements Offer, Comparable<FreeItemOffer> {
-    public final ItemsCountWithCost itemCountWithCost;
-    public final int freeCount;
+    final ItemsCountWithCost itemCountWithCost;
+    final int freeCount;
 
     private FreeItemOffer(ItemsCountWithCost itemCountWithCost, int freeCount) {
       this.itemCountWithCost = itemCountWithCost;
@@ -281,3 +284,4 @@ interface Offer {
     }
   }
 }
+

@@ -13,7 +13,7 @@ public class SkuTableParserTest {
   private SkuTableParser skuTableParser = new SkuTableParser();
 
   @Test(expected = IllegalArgumentException.class)
-  public void shouldFailfIfNull() {
+  public void shouldFailIfNull() {
     skuTableParser.parse(null);
   }
 
@@ -117,3 +117,4 @@ public class SkuTableParserTest {
   }
 
 }
+
