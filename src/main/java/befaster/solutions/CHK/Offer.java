@@ -221,4 +221,3 @@ interface Offer {
     }
   }
 }
-
