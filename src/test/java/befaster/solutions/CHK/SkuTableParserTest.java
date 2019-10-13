@@ -2,6 +2,8 @@ package befaster.solutions.CHK;
 
 import org.junit.Test;
 
+import java.util.List;
+
 import static befaster.solutions.CHK.Offer.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -38,14 +40,16 @@ public class SkuTableParserTest {
 
   @Test
   public void shouldParseItemWithoutSpecialOffer() {
-    assertThat(skuTableParser.parse(
+    final List<Offer> offers = skuTableParser.parse(
         "+------+-------+------------------------+\n" +
             "| Item | Price | Special offers         |\n" +
             "+------+-------+------------------------+\n" +
             "| C    | 20    |                        |\n" +
             "+------+-------+------------------------+"
-    ), hasItem(UsualCost.by(ItemCount.by('C', 1), 20)));
+    );
+    assertThat(offers, hasItem(UsualCost.by(ItemCount.by('C', 1), 20)));
   }
 
 }
+
 
