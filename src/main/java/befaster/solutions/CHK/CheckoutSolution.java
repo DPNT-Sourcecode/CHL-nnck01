@@ -19,33 +19,44 @@ public class CheckoutSolution {
       'E', 40
   );
 
-  private final Map<Character, List<LetterCountWithCost>> skus = ImmutableMap.of(
-      'A', ImmutableList.of(
-          LetterCountWithCost.by('A', 5, 200),
-          LetterCountWithCost.by('A', 3, 130),
-          LetterCountWithCost.by('A', 1, 50)
-      ),
-      'B', ImmutableList.of(
-          LetterCountWithCost.by('B', 1, 30)
-      ),
-      'C', ImmutableList.of(
-          LetterCountWithCost.by('C', 1, 20)
-      ),
-      'D', ImmutableList.of(
-          LetterCountWithCost.by('D', 1, 15)
-      ),
-      'E', ImmutableList.of(
-          LetterCountWithCost.by('E', 1, 40)
-      )
-  );
+//  private final Map<Character, List<LetterCountWithCost>> skus = ImmutableMap.of(
+//      'A', ImmutableList.of(
+//          LetterCountWithCost.by('A', 5, 200),
+//          LetterCountWithCost.by('A', 3, 130),
+//          LetterCountWithCost.by('A', 1, 50)
+//      ),
+//      'B', ImmutableList.of(
+//          LetterCountWithCost.by('B', 1, 30)
+//      ),
+//      'C', ImmutableList.of(
+//          LetterCountWithCost.by('C', 1, 20)
+//      ),
+//      'D', ImmutableList.of(
+//          LetterCountWithCost.by('D', 1, 15)
+//      ),
+//      'E', ImmutableList.of(
+//          LetterCountWithCost.by('E', 1, 40)
+//      )
+//  );
 
-  private final Map<Character, List<Offer>> specialOffers = ImmutableMap.of(
+  private final Map<Character, List<Offer>> offers = ImmutableMap.of(
       'A', ImmutableList.of(
           DiscountOffer.by(LetterCount.by(5, 'A'), 50),
           DiscountOffer.by(LetterCount.by(3, 'A'), 20)
+//          UsualCost.by('A', 50)
+      ),
+      'B', ImmutableList.of(
+//          UsualCost.by('B', 30)
+      ),
+      'C', ImmutableList.of(
+//          UsualCost.by('C', 20)
+      ),
+      'D', ImmutableList.of(
+//          UsualCost.by('D', 15)
       ),
       'E', ImmutableList.of(
           ExtraItemOffer.by(LetterCount.by(2, 'E'), LetterCountWithCost.by('B', 1, usualCost.get('B')))
+//          UsualCost.by('E', 40)
       )
   );
 
@@ -71,10 +82,10 @@ public class CheckoutSolution {
       final Integer count = letterToCount.getValue();
       final LetterCountWithCost withUsualCost = LetterCountWithCost.by(letter, count, count * usualCost.get(letter));
 
-      final List<Offer> specials = specialOffers.getOrDefault(letter, emptyList());
+      final List<Offer> specials = offers.getOrDefault(letter, emptyList());
 
       LetterCountWithCost current = withUsualCost;
-      for (final Offer offer: specials) current = offer.applyTo(current);
+      for (final Offer offer : specials) current = offer.applyTo(current);
 
       total += current.cost;
     }
@@ -84,10 +95,6 @@ public class CheckoutSolution {
 
   private static boolean validLetter(char c) {
     return 'A' <= c && c <= 'Z';
-  }
-
-  private int usualOffersSum(char letter, int lettersCount) {
-    return usualCost.getOrDefault(letter, 0) * lettersCount;
   }
 
   interface Offer {
@@ -107,16 +114,29 @@ public class CheckoutSolution {
   }
 
   private static final class UsualCost implements Offer {
-    final LetterCountWithCost letterCountWithCost;
+    final Character letter;
+    final int cost;
 
-    @Override
-    public LetterCountWithCost toLetterCountWithCost() {
-      return null;
+    public UsualCost(Character letter, int cost) {
+      this.letter = letter;
+      this.cost = cost;
+    }
+
+    static UsualCost by(Character letter, int cost) {
+      return new UsualCost(letter, cost);
     }
 
     @Override
-    public LetterCountWithCost applyTo(LetterCountWithCost letterCountWithCost) {
-      return null;
+    public LetterCountWithCost toLetterCountWithCost() {
+      return LetterCountWithCost.by(letter, 1, cost);
+    }
+
+    @Override
+    public LetterCountWithCost applyTo(LetterCountWithCost other) {
+      if (letter != other.letter) return other;
+
+      int times = other.count;
+      return LetterCountWithCost.by(letter, 0, other.cost + times * cost);
     }
 
     @Override
@@ -309,6 +329,7 @@ public class CheckoutSolution {
     }
   }
 }
+
 
 
 
