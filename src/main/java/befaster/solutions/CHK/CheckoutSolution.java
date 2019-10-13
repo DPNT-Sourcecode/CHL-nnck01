@@ -352,7 +352,3 @@ public class CheckoutSolution {
     }
   }
 }
-
-
-
-

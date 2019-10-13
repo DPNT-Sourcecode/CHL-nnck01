@@ -91,7 +91,3 @@ public class CheckoutSolutionTest {
     assertThat(checkoutSolution.checkout("AAAAAAAA"), is(330));
   }
 }
-
-
-
-
