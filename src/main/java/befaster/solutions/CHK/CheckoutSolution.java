@@ -101,8 +101,15 @@ public class CheckoutSolution {
   interface SpecialOffer {
     LetterCountWithCost toLetterCountWithCost();
 
-    LettersWithAmount applyTo(LettersWithAmount lettersWithAmount);
+    /**
+     * Applies special offer to LetterCountWithCost.
+     *
+     * @param letterCountWithCost - current
+     * @return cost is reduced by discount multiplied number of times applicable. Letter count is reduced accordingly.
+     */
     LetterCountWithCost applyTo(LetterCountWithCost letterCountWithCost);
+
+    LettersWithAmount applyTo(LettersWithAmount lettersWithAmount);
 
     SpecialOffer times(int times);
   }
@@ -135,7 +142,15 @@ public class CheckoutSolution {
 
     @Override
     public LetterCountWithCost applyTo(LetterCountWithCost letterCountWithCost) {
-      return null;
+      if (letterCount.letter != letterCountWithCost.letter || letterCount.count < letterCountWithCost.count)
+        return letterCountWithCost;
+
+      int times = letterCountWithCost.count / letterCount.count;
+      return LetterCountWithCost.by(
+              letterCountWithCost.letter,
+              letterCountWithCost.count % letterCount.count,
+              letterCountWithCost.cost - discount * times
+      );
     }
 
     @Override
@@ -170,6 +185,19 @@ public class CheckoutSolution {
       return ExtraItemOffer.by(
               LetterCount.by(letterCount.count * times, letterCount.letter),
               LetterCountWithCost.by(extraItems.letter, extraItems.count * times, extraItems.cost * times)
+      );
+    }
+
+    @Override
+    public LetterCountWithCost applyTo(LetterCountWithCost letterCountWithCost) {
+      if (letterCount.letter != letterCountWithCost.letter || letterCount.count < letterCountWithCost.count)
+        return letterCountWithCost;
+
+      int times = letterCountWithCost.count / letterCount.count;
+      return LetterCountWithCost.by(
+              letterCountWithCost.letter,
+              letterCountWithCost.count % letterCount.count,
+              letterCountWithCost.cost - discount * times
       );
     }
 
@@ -265,3 +293,4 @@ public class CheckoutSolution {
     }
   }
 }
+
