@@ -34,6 +34,25 @@ public class SkuTableParser {
         .stream()
         .map(s -> s.split("\\|"))
         .flatMap(params -> parseOffer(params).stream())
+        .sorted((offer1, offer2) -> {
+          if (offer2 instanceof FreeItemOffer) {
+            if (offer1 instanceof FreeItemOffer) {
+              final FreeItemOffer freeOffer1 = (FreeItemOffer) offer1;
+              final FreeItemOffer freeOffer2 = (FreeItemOffer) offer2;
+              return freeOffer1.itemCountWithCost.item == freeOffer2.itemCountWithCost.item ? freeOffer1.freeCount - freeOffer2.freeCount : 1;
+            }
+            return 1;
+          }
+
+          if (offer2 instanceof ExtraItemOffer) {
+            if (offer1 instanceof ExtraItemOffer) {
+              final ExtraItemOffer extraOffer1 = (ExtraItemOffer) offer1;
+              final ExtraItemOffer extraOffer2 = (ExtraItemOffer) offer2;
+
+              return freeOffer1.itemCountWithCost.item == freeOffer2.itemCountWithCost.item ? freeOffer1.freeCount - freeOffer2.freeCount : 1;
+            }
+          }
+        })
         .collect(toList());
   }
 
@@ -83,6 +102,7 @@ public class SkuTableParser {
     );
   }
 }
+
 
 
 

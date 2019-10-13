@@ -65,7 +65,7 @@ interface Offer {
     }
   }
 
-  final class DiscountOffer implements Offer {
+  final class DiscountOffer implements Offer, Comparable<DiscountOffer> {
     public final ItemCount itemsCount;
     public final int price;
 
@@ -101,6 +101,13 @@ interface Offer {
     }
 
     @Override
+    public int compareTo(DiscountOffer other) {
+      if (itemsCount.item != other.itemsCount.item) return itemsCount.item - other.itemsCount.item;
+
+      return itemsCount.count - other.itemsCount.count;
+    }
+
+    @Override
     public boolean equals(Object o) {
       if (this == o) return true;
       if (!(o instanceof DiscountOffer)) return false;
@@ -123,7 +130,7 @@ interface Offer {
     }
   }
 
-  final class ExtraItemOffer implements Offer {
+  final class ExtraItemOffer implements Offer, Comparable<ExtraItemOffer> {
     public final ItemsCountWithCost itemsCountWithCost;
     public final ItemsCountWithCost extraItemsWithCost;
 
@@ -142,8 +149,6 @@ interface Offer {
           itemsCountWithCost.times(times),
           extraItemsWithCost.times(times)
       );
-
-
     }
 
     @Override
@@ -161,6 +166,11 @@ interface Offer {
               )
           )
           .plus(itemsCountWithCost.cost * times);
+    }
+
+    @Override
+    public int compareTo(ExtraItemOffer o) {
+      return 0;
     }
 
     public static ExtraItemOffer by(ItemsCountWithCost itemsCountWithCost, ItemsCountWithCost extraItems) {
@@ -255,5 +265,6 @@ interface Offer {
     }
   }
 }
+
 
 
