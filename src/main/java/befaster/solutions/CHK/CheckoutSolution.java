@@ -119,14 +119,6 @@ public class CheckoutSolution {
   interface Offer {
     LetterCountWithCost toLetterCountWithCost();
 
-    /**
-     * Applies special offer to LetterCountWithCost.
-     *
-     * @param letterCountWithCost - current
-     * @return cost is reduced by discount multiplied number of times applicable. Letter count is reduced accordingly.
-     */
-    LetterCountWithCost applyTo(LetterCountWithCost letterCountWithCost);
-
     LettersWithAmount applyTo(LettersWithAmount lettersWithAmount);
 
     Offer times(int times);
@@ -151,16 +143,8 @@ public class CheckoutSolution {
     }
 
     @Override
-    public LetterCountWithCost applyTo(LetterCountWithCost other) {
-      if (letterCount.letter != other.letter) return other;
-
-      int times = other.count;
-      return LetterCountWithCost.by(letterCount.letter, 0, other.cost + times * cost);
-    }
-
-    @Override
     public LettersWithAmount applyTo(LettersWithAmount lettersWithAmount) {
-      final Integer count = lettersWithAmount.lettersCount.getOrDefault(letterCount, 0);
+      final Integer count = lettersWithAmount.lettersCount.getOrDefault(letterCount.letter, 0);
       if (count == 0) return lettersWithAmount;
 
       return lettersWithAmount.minus(times(count).toLetterCountWithCost());
@@ -195,19 +179,6 @@ public class CheckoutSolution {
       return DiscountOffer.by(
           LetterCount.by(letterCount.letter, letterCount.count * times),
           discount * times
-      );
-    }
-
-    @Override
-    public LetterCountWithCost applyTo(LetterCountWithCost letterCountWithCost) {
-      if (letterCount.letter != letterCountWithCost.letter || letterCount.count > letterCountWithCost.count)
-        return letterCountWithCost;
-
-      int times = letterCountWithCost.count / letterCount.count;
-      return LetterCountWithCost.by(
-          letterCountWithCost.letter,
-          letterCountWithCost.count % letterCount.count,
-          letterCountWithCost.cost - discount * times
       );
     }
 
@@ -251,25 +222,16 @@ public class CheckoutSolution {
     }
 
     @Override
-    public LetterCountWithCost applyTo(LetterCountWithCost letterCountWithCost) {
-      if (this.letterCountWithCost.letter != letterCountWithCost.letter || this.letterCountWithCost.count > letterCountWithCost.count)
-        return letterCountWithCost;
-
-      int times = letterCountWithCost.count / this.letterCountWithCost.count;
-      return LetterCountWithCost.by(
-          letterCountWithCost.letter,
-          letterCountWithCost.count % this.letterCountWithCost.count,
-          letterCountWithCost.cost
-      );
-    }
-
-    @Override
     public LettersWithAmount applyTo(LettersWithAmount lettersWithAmount) {
       final Integer count = lettersWithAmount.lettersCount.getOrDefault(letterCountWithCost.letter, 0);
       if (count == null || count < letterCountWithCost.count) return lettersWithAmount;
 
       int times = count / letterCountWithCost.count;
-      return lettersWithAmount.minus(times(times).toLetterCountWithCost());
+
+      final HashMap<Character, Integer> newLettersCount = new HashMap<>(lettersWithAmount.lettersCount);
+      newLettersCount.computeIfPresent(extraItems.letter, (ignored, oldCount) -> oldCount - extraItems.count * times);
+      newLettersCount.computeIfPresent(letterCountWithCost.letter, (ignored, oldCount) -> oldCount - letterCountWithCost.count * times);
+      return LettersWithAmount.by(lettersWithAmount.amount + letterCountWithCost.cost * times, newLettersCount);
     }
   }
 
@@ -356,6 +318,7 @@ public class CheckoutSolution {
     }
   }
 }
+
 
 
 
