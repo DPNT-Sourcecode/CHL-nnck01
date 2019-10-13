@@ -9,58 +9,6 @@ import java.util.Map;
 
 public class CheckoutSolution {
 
-  private final Map<Character, Integer> usualCost = ImmutableMap.of(
-      'A', 50,
-      'B', 30,
-      'C', 20,
-      'D', 15,
-      'E', 40
-  );
-
-//  private final Map<Character, List<LetterCountWithCost>> skus = ImmutableMap.of(
-//      'A', ImmutableList.of(
-//          LetterCountWithCost.by('A', 5, 200),
-//          LetterCountWithCost.by('A', 3, 130),
-//          LetterCountWithCost.by('A', 1, 50)
-//      ),
-//      'B', ImmutableList.of(
-//          LetterCountWithCost.by('B', 1, 30)
-//      ),
-//      'C', ImmutableList.of(
-//          LetterCountWithCost.by('C', 1, 20)
-//      ),
-//      'D', ImmutableList.of(
-//          LetterCountWithCost.by('D', 1, 15)
-//      ),
-//      'E', ImmutableList.of(
-//          LetterCountWithCost.by('E', 1, 40)
-//      )
-//  );
-
-//  private final Map<Character, List<Offer>> offers = ImmutableMap.of(
-//      'A', ImmutableList.of(
-//          DiscountOffer.by(LetterCount.by('A', 5), 200),
-//          DiscountOffer.by(LetterCount.by('A', 3), 130)
-////          UsualCost.by('A', 50)
-//      ),
-//      'B', ImmutableList.of(
-//          DiscountOffer.by(LetterCount.by('B', 2), 45)
-////          UsualCost.by('B', 30)
-//      ),
-//      'C', ImmutableList.of(
-////          UsualCost.by('C', 20)
-//      ),
-//      'D', ImmutableList.of(
-////          UsualCost.by('D', 15)
-//      ),
-//      'E', ImmutableList.of(
-//          ExtraItemOffer.by(
-//              LetterCountWithCost.by('E', 2, 80),
-//              LetterCountWithCost.by('B', 1, usualCost.get('B')))
-////          UsualCost.by('E', 40)
-//      )
-//  );
-
   private final List<Offer> allOffers = ImmutableList.of(
       ExtraItemOffer.by(
           LetterCountWithCost.by('E', 2, 80),
@@ -318,8 +266,3 @@ public class CheckoutSolution {
     }
   }
 }
-
-
-
-
-
