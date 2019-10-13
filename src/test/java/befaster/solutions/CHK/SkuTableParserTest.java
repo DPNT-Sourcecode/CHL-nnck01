@@ -59,10 +59,11 @@ public class SkuTableParserTest {
             "| B    | 30    | 2B for 45              |\n" +
             "+------+-------+------------------------+"
     );
-    assertThat(offers, hasItem(UsualCost.by(ItemCount.by('C', 1), 20)));
+    assertThat(offers, hasItem(DiscountOffer.by(ItemCount.by('B', 2), 45)));
   }
 
 }
+
 
 
 

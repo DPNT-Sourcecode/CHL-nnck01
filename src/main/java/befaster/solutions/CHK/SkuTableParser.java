@@ -1,16 +1,19 @@
 package befaster.solutions.CHK;
 
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static befaster.solutions.CHK.Offer.*;
+import static befaster.solutions.CHK.Offer.DiscountOffer;
+import static befaster.solutions.CHK.Offer.UsualCost;
+import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.math.NumberUtils.*;
+import static org.apache.commons.lang3.StringUtils.trim;
+import static org.apache.commons.lang3.math.NumberUtils.createInteger;
 
 public class SkuTableParser {
 
@@ -32,22 +35,39 @@ public class SkuTableParser {
     return lines.subList(3, lines.size() - 1)
         .stream()
         .map(s -> s.split("\\|"))
-        .map(this::parseOffer)
+        .flatMap(params -> parseOffer(params).stream())
         .collect(toList());
   }
 
-  private Offer parseOffer(String[] params) {
+  private List<Offer> parseOffer(String[] params) {
     final char item = trim(params[1]).charAt(0);
     final int price = createInteger(trim(params[2]));
 
     final String specialOffersLine = trim(params[3]);
-    if (specialOffersLine.isEmpty()) return UsualCost.by(ItemCount.by(item, 1), price);
+    final UsualCost usualOffer = UsualCost.by(ItemCount.by(item, 1), price);
+    if (specialOffersLine.isEmpty()) return ImmutableList.of(usualOffer);
 
-    final List<String> specialOffers = Arrays.asList(specialOffersLine.split(","));
+    final List<Offer> specialOffers = stream(specialOffersLine.split(","))
+        .map(StringUtils::trim)
+        .map(line -> {
+          if (line.contains("for")) {
+            final String[] discountLine = line.split("for");
+            final String count = discountLine[0].trim();
+            final String specialPrice = discountLine[1].trim();
+            return DiscountOffer.by(ItemCount.by(item, createInteger(count.substring(0, count.length() - 1))), createInteger(specialPrice));
+          }
 
-    return null;
+          return null;
+        })
+        .collect(toList());
+
+    return ImmutableList.<Offer>builder()
+        .addAll(specialOffers)
+        .add(usualOffer)
+        .build();
   }
 }
+
 
 
 
