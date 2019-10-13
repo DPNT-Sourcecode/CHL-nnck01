@@ -2,10 +2,13 @@ package befaster.solutions.CHK;
 
 import com.google.common.collect.ImmutableList;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.summingInt;
 
 public class CheckoutSolution {
 
@@ -181,10 +184,14 @@ public class CheckoutSolution {
 
       int times = count / letterCountWithCost.count;
 
-      final HashMap<Character, Integer> newLettersCount = new HashMap<>(lettersWithAmount.lettersCount);
-      newLettersCount.computeIfPresent(extraItems.letter, (ignored, oldCount) -> oldCount - extraItems.count * times);
-      newLettersCount.computeIfPresent(letterCountWithCost.letter, (ignored, oldCount) -> oldCount - letterCountWithCost.count * times);
-      return LettersWithAmount.by(lettersWithAmount.amount + letterCountWithCost.cost * times, newLettersCount);
+      return lettersWithAmount
+          .minus(
+              ImmutableList.of(
+                extraItems.toLetterCount().times(times),
+                letterCountWithCost.toLetterCount().times(times)
+              )
+          )
+          .plus(letterCountWithCost.cost * times);
     }
   }
 
@@ -215,7 +222,8 @@ public class CheckoutSolution {
       minusLettersCount
           .forEach((letter, count) -> newLettersCount.compute(letter, (ignored, oldCount) -> {
             if (oldCount == null) return 0;
-            if (oldCount - count < 0) throw new IllegalArgumentException("Can not subtract " + LetterCount.by(letter, count));
+            if (oldCount - count < 0)
+              throw new IllegalArgumentException("Can not subtract " + LetterCount.by(letter, count));
 
             return oldCount - count;
           }));
@@ -224,18 +232,23 @@ public class CheckoutSolution {
     }
 
     LettersWithAmount minus(Collection<LetterCount> minusLetters) {
-      minusLetters
+      final Map<Character, Integer> lettersToCount = minusLetters
           .stream()
-          .collect(groupingBy(letterCount -> letterCount.letter, Collectors.mapping()))
-      return minus()
+          .collect(groupingBy(letterCount -> letterCount.letter, summingInt(lettersCount -> lettersCount.count)));
+      return minus(lettersCount);
     }
 
     LettersWithAmount minus(int amount) {
       return LettersWithAmount.by(this.amount - amount, lettersCount);
     }
 
+    LettersWithAmount plus(int amount) {
+      return LettersWithAmount.by(this.amount + amount, lettersCount);
+    }
+
     LettersWithAmount minus(LettersWithAmount lettersWithAmount) {
-      return minus(lettersWithAmount.lettersCount);
+      return minus(lettersWithAmount.lettersCount)
+          .minus(amount);
     }
 
     static LettersWithAmount by(int amount, Map<Character, Integer> lettersCount) {
@@ -310,5 +323,6 @@ public class CheckoutSolution {
     }
   }
 }
+
 
 
