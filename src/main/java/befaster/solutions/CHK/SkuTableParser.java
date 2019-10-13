@@ -1,17 +1,12 @@
 package befaster.solutions.CHK;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static befaster.solutions.CHK.Offer.*;
-import static befaster.solutions.CHK.Offer.DiscountOffer;
-import static befaster.solutions.CHK.Offer.UsualCost;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -94,5 +89,6 @@ public class SkuTableParser {
     );
   }
 }
+
 
 
