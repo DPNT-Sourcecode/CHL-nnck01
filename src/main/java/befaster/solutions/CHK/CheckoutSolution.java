@@ -2,9 +2,10 @@ package befaster.solutions.CHK;
 
 import com.google.common.collect.ImmutableList;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 public class CheckoutSolution {
 
@@ -209,15 +210,32 @@ public class CheckoutSolution {
       return new LettersWithAmount(amount + letterCountWithCost.cost, newLettersCount);
     }
 
-    LettersWithAmount minus(Iterable<LetterCount> minusLetters) {
+    LettersWithAmount minus(Map<Character, Integer> minusLettersCount) {
       final Map<Character, Integer> newLettersCount = new HashMap<>(lettersCount);
-      minusLetters
-          .forEach(letterCount -> newLettersCount.compute(letterCount.letter, (ignored, oldCount) -> {
+      minusLettersCount
+          .forEach((letter, count) -> newLettersCount.compute(letter, (ignored, oldCount) -> {
             if (oldCount == null) return 0;
-            if (oldCount - letterCount.count < 0) throw new IllegalArgumentException("Can not subtract " + letterCount)
-          }));
-      newLettersCount.compute(letter, count - letterCount);
+            if (oldCount - count < 0) throw new IllegalArgumentException("Can not subtract " + LetterCount.by(letter, count));
 
+            return oldCount - count;
+          }));
+
+      return LettersWithAmount.by(amount, newLettersCount);
+    }
+
+    LettersWithAmount minus(Collection<LetterCount> minusLetters) {
+      minusLetters
+          .stream()
+          .collect(groupingBy(letterCount -> letterCount.letter, Collectors.mapping()))
+      return minus()
+    }
+
+    LettersWithAmount minus(int amount) {
+      return LettersWithAmount.by(this.amount - amount, lettersCount);
+    }
+
+    LettersWithAmount minus(LettersWithAmount lettersWithAmount) {
+      return minus(lettersWithAmount.lettersCount);
     }
 
     static LettersWithAmount by(int amount, Map<Character, Integer> lettersCount) {
@@ -292,4 +310,5 @@ public class CheckoutSolution {
     }
   }
 }
+
 
