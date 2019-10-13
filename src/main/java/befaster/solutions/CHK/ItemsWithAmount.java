@@ -82,4 +82,3 @@ public final class ItemsWithAmount {
     return Objects.hash(amount, itemsCount);
   }
 }
-
