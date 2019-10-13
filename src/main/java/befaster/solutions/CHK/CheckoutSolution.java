@@ -1,7 +1,6 @@
 package befaster.solutions.CHK;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +13,10 @@ public class CheckoutSolution {
           LetterCountWithCost.by('E', 2, 80),
           LetterCountWithCost.by('B', 1, 0)
       ),
+      ExtraItemOffer.by(
+          LetterCountWithCost.by('F', 2, 20),
+          LetterCountWithCost.by('F', 1, 0)
+      ),
       DiscountOffer.by(LetterCount.by('A', 5), 200),
       DiscountOffer.by(LetterCount.by('A', 3), 130),
       DiscountOffer.by(LetterCount.by('B', 2), 45),
@@ -21,7 +24,8 @@ public class CheckoutSolution {
       UsualCost.by(LetterCount.by('B', 1), 30),
       UsualCost.by(LetterCount.by('C', 1), 20),
       UsualCost.by(LetterCount.by('D', 1), 15),
-      UsualCost.by(LetterCount.by('E', 1), 40)
+      UsualCost.by(LetterCount.by('E', 1), 40),
+      UsualCost.by(LetterCount.by('F', 1), 10)
   );
 
   public Integer checkout(String skus) {
@@ -205,6 +209,17 @@ public class CheckoutSolution {
       return new LettersWithAmount(amount + letterCountWithCost.cost, newLettersCount);
     }
 
+    LettersWithAmount minus(Iterable<LetterCount> minusLetters) {
+      final Map<Character, Integer> newLettersCount = new HashMap<>(lettersCount);
+      minusLetters
+          .forEach(letterCount -> newLettersCount.compute(letterCount.letter, (ignored, oldCount) -> {
+            if (oldCount == null) return 0;
+            if (oldCount - letterCount.count < 0) throw new IllegalArgumentException("Can not subtract " + letterCount)
+          }));
+      newLettersCount.compute(letter, count - letterCount);
+
+    }
+
     static LettersWithAmount by(int amount, Map<Character, Integer> lettersCount) {
       return new LettersWithAmount(amount, lettersCount);
     }
@@ -226,11 +241,19 @@ public class CheckoutSolution {
     static LetterCount by(char letter, int count) {
       return new LetterCount(letter, count);
     }
+
+    @Override
+    public String toString() {
+      return "LetterCount{" +
+          "count=" + count +
+          ", letter=" + letter +
+          '}';
+    }
   }
 
   private static final class LetterCountWithCost {
-    final int count;
     final char letter;
+    final int count;
     final int cost;
 
     private LetterCountWithCost(char letter, int count, int cost) {
@@ -239,22 +262,25 @@ public class CheckoutSolution {
       this.cost = cost;
     }
 
+    LetterCount toLetterCount() {
+      return LetterCount.by(letter, count);
+    }
+
+    LetterCountWithCost times(int times) {
+      return LetterCountWithCost.by(letter, count * times, cost * times);
+    }
+
     private static LetterCountWithCost by(char letter, int count, int cost) {
       return new LetterCountWithCost(letter, count, cost);
     }
-  }
 
-  private static final class CountToCost {
-    final int count;
-    final int cost;
-
-    private CountToCost(int count, int cost) {
-      this.count = count;
-      this.cost = cost;
-    }
-
-    static CountToCost by(int count, int cost) {
-      return new CountToCost(count, cost);
+    @Override
+    public String toString() {
+      return "LetterCountWithCost{" +
+          "letter=" + letter +
+          ", count=" + count +
+          ", cost=" + cost +
+          '}';
     }
   }
 
@@ -266,3 +292,4 @@ public class CheckoutSolution {
     }
   }
 }
+
