@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static befaster.solutions.CHK.Offer.*;
 import static befaster.solutions.CHK.Offer.DiscountOffer;
 import static befaster.solutions.CHK.Offer.UsualCost;
 import static java.util.Arrays.stream;
@@ -56,8 +57,8 @@ public class SkuTableParser {
             return parseDiscountOffer(item, line);
           }
 
-          if (line.contains("for")) {
-            return parseDiscountOffer(item, line);
+          if (line.contains("get one")) {
+            return parseExtraOrFreeOffer(item, usualOffer.cost, line);
           }
 
           return null;
@@ -76,24 +77,21 @@ public class SkuTableParser {
     final String specialPrice = discountLine[1].trim();
     return DiscountOffer.by(ItemCount.by(item, createInteger(count.substring(0, count.length() - 1))), createInteger(specialPrice));
   }
-  private DiscountOffer parseExtraOrFreeOffer(char item, String line) {
-    final String[] offerLine = line.split("get");
+  private Offer parseExtraOrFreeOffer(char item, int price, String line) {
+    final String[] offerLine = line.split("get one");
     final String countLine = offerLine[0].trim();
     final int count = createInteger(countLine.substring(0, countLine.length() - 1));
     final char freeItem = offerLine[1].charAt(0);
-    return DiscountOffer.by(ItemCount.by(item, count), createInteger(specialPrice));
-  }
 
-  private Map<String, Integer> toDigit = ImmutableMap.of(
-      "one", 1,
-      "two", 2,
-      "three", 3,
-      "four", 4,
-      "five", 5,
-      "six", 6,
-      "seven", 7,
-      "eight", 8,
-      "nine", 9,
-      "two", 10
-  );
+    if (item == freeItem) return FreeItemOffer.by(
+        ItemsCountWithCost.by(item, count, count * price),
+        1
+    );
+
+    return ExtraItemOffer.by(
+        ItemsCountWithCost.by(item, count, count * price),
+        ItemsCountWithCost.by(freeItem, 1, 0)
+    );
+  }
 }
+

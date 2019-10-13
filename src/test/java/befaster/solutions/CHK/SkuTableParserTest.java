@@ -71,7 +71,28 @@ public class SkuTableParserTest {
             "| N    | 40    | 3N get one M free      |\n" +
             "+------+-------+------------------------+"
     );
-    assertThat(offers, hasItem(DiscountOffer.by(ItemCount.by('B', 2), 45)));
+    assertThat(offers, hasItem(ExtraItemOffer.by(
+        ItemsCountWithCost.by('N', 3, 120),
+        ItemsCountWithCost.by('M', 1, 0)
+    )));
+  }
+
+  @Test
+  public void shouldParseItemWithFreeItem() {
+    final List<Offer> offers = skuTableParser.parse(
+        "+------+-------+------------------------+\n" +
+            "| Item | Price | Special offers         |\n" +
+            "+------+-------+------------------------+\n" +
+            "| U    | 40    | 3U get one U free      |\n" +
+            "+------+-------+------------------------+"
+    );
+    assertThat(offers, hasItem(
+        FreeItemOffer.by(
+            ItemsCountWithCost.by('U', 3, 120),
+            1
+        )
+    ));
   }
 
 }
+
