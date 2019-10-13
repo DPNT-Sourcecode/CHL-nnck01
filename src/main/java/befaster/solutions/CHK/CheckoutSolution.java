@@ -17,6 +17,26 @@ public class CheckoutSolution {
           'E', 40
   );
 
+  private final Map<Character, List<LetterCountWithCost>> skus = ImmutableMap.of(
+          'A', ImmutableList.of(
+                  LetterCountWithCost.by('A', 5, 200),
+                  LetterCountWithCost.by('A', 3, 130),
+                  LetterCountWithCost.by('A', 1, 50)
+          ),
+          'B', ImmutableList.of(
+                  LetterCountWithCost.by('B', 1, 30)
+          ),
+          'C', ImmutableList.of(
+                  LetterCountWithCost.by('C', 1, 20)
+          ),
+          'D', ImmutableList.of(
+                  LetterCountWithCost.by('D', 1, 15)
+          ),
+          'E', ImmutableList.of(
+                  LetterCountWithCost.by('E', 1, 40)
+          )
+  );
+
   private final Map<Character, CountToCost> specialOffers = ImmutableMap.of(
           'A', CountToCost.by(5, 200),
 //          'A', CountToCost.by(3, 130),
@@ -25,8 +45,11 @@ public class CheckoutSolution {
 
   private final Map<Character, List<SpecialOffer>> offers = ImmutableMap.of(
           'A', ImmutableList.of(
-                  DiscountOffer.by(LetterCount.by(3, 'A'), 20),
-                  DiscountOffer.by(LetterCount.by(5, 'A'), 50)
+                  DiscountOffer.by(LetterCount.by(5, 'A'), 50),
+                  DiscountOffer.by(LetterCount.by(3, 'A'), 20)
+          ),
+          'E', ImmutableList.of(
+                  ExtraItemOffer.by(LetterCount.by(2, 'E'), LetterCountWithCost.by('B', 1, usualCost.get('B')))
           )
   );
 
@@ -95,7 +118,7 @@ public class CheckoutSolution {
 
     @Override
     public LetterCountWithCost toLetterCountWithCost() {
-      return LetterCountWithCost.by(letterCount, discount);
+      return LetterCountWithCost.by(letterCount.letter, letterCount.count, discount);
     }
 
     public DiscountOffer times(int times) {
@@ -129,13 +152,13 @@ public class CheckoutSolution {
     }
 
     public LetterCountWithCost toLetterCountWithCost() {
-      return LetterCountWithCost.by(letterCount, extraItems.cost);
+      return LetterCountWithCost.by(letterCount.letter, letterCount.count, extraItems.cost);
     }
 
     public ExtraItemOffer times(int times) {
       return ExtraItemOffer.by(
               LetterCount.by(letterCount.count * times, letterCount.letter),
-              LetterCountWithCost.by(extraItems.letterCount, extraItems.cost * times)
+              LetterCountWithCost.by(extraItems.letter, extraItems.count * times, extraItems.cost * times)
       );
     }
 
@@ -159,8 +182,8 @@ public class CheckoutSolution {
     }
 
     LettersWithAmount minus(LetterCountWithCost letterCountWithCost) {
-      final char letter = letterCountWithCost.letterCount.letter;
-      final int letterCount = letterCountWithCost.letterCount.count;
+      final char letter = letterCountWithCost.letter;
+      final int letterCount = letterCountWithCost.count;
 
       final Integer count = lettersCount.getOrDefault(letter, 0);
       if (count < letterCount)
@@ -194,16 +217,18 @@ public class CheckoutSolution {
   }
 
   private static final class LetterCountWithCost {
-    final LetterCount letterCount;
+    final int count;
+    final char letter;
     final int cost;
 
-    private LetterCountWithCost(LetterCount letterCount, int cost) {
-      this.letterCount = letterCount;
+    private LetterCountWithCost(char letter, int count, int cost) {
+      this.letter = letter;
+      this.count = count;
       this.cost = cost;
     }
 
-    private static LetterCountWithCost by(LetterCount letterCount, int cost) {
-      return new LetterCountWithCost(letterCount, cost);
+    private static LetterCountWithCost by(char letter, int count, int cost) {
+      return new LetterCountWithCost(letter, count, cost);
     }
   }
 
@@ -220,4 +245,13 @@ public class CheckoutSolution {
       return new CountToCost(count, cost);
     }
   }
+
+  private static class Item {
+    final Character name;
+
+    private Item(Character name) {
+      this.name = name;
+    }
+  }
 }
+
