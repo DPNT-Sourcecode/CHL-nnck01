@@ -39,7 +39,7 @@ public class CheckoutSolution {
       )
   );
 
-  private final Map<Character, List<SpecialOffer>> specialOffers = ImmutableMap.of(
+  private final Map<Character, List<Offer>> specialOffers = ImmutableMap.of(
       'A', ImmutableList.of(
           DiscountOffer.by(LetterCount.by(5, 'A'), 50),
           DiscountOffer.by(LetterCount.by(3, 'A'), 20)
@@ -71,12 +71,12 @@ public class CheckoutSolution {
       final Integer count = letterToCount.getValue();
       final LetterCountWithCost withUsualCost = LetterCountWithCost.by(letter, count, count * usualCost.get(letter));
 
-      final List<SpecialOffer> specials = specialOffers.getOrDefault(letter, emptyList());
+      final List<Offer> specials = specialOffers.getOrDefault(letter, emptyList());
 
-      specials
-          .stream()
-          .reduce(withUsualCost, ());
+      LetterCountWithCost current = withUsualCost;
+      for (final Offer offer: specials) current = offer.applyTo(current);
 
+      total += current.cost;
     }
 
     return total;
@@ -90,7 +90,7 @@ public class CheckoutSolution {
     return usualCost.getOrDefault(letter, 0) * lettersCount;
   }
 
-  interface SpecialOffer {
+  interface Offer {
     LetterCountWithCost toLetterCountWithCost();
 
     /**
@@ -103,10 +103,34 @@ public class CheckoutSolution {
 
     LettersWithAmount applyTo(LettersWithAmount lettersWithAmount);
 
-    SpecialOffer times(int times);
+    Offer times(int times);
   }
 
-  private static final class DiscountOffer implements SpecialOffer {
+  private static final class UsualCost implements Offer {
+    final LetterCountWithCost letterCountWithCost;
+
+    @Override
+    public LetterCountWithCost toLetterCountWithCost() {
+      return null;
+    }
+
+    @Override
+    public LetterCountWithCost applyTo(LetterCountWithCost letterCountWithCost) {
+      return null;
+    }
+
+    @Override
+    public LettersWithAmount applyTo(LettersWithAmount lettersWithAmount) {
+      return null;
+    }
+
+    @Override
+    public Offer times(int times) {
+      return null;
+    }
+  }
+
+  private static final class DiscountOffer implements Offer {
     final LetterCount letterCount;
     final int discount;
 
@@ -155,7 +179,7 @@ public class CheckoutSolution {
     }
   }
 
-  private static final class ExtraItemOffer implements SpecialOffer {
+  private static final class ExtraItemOffer implements Offer {
     final LetterCount letterCount;
     final LetterCountWithCost extraItems;
 
@@ -285,5 +309,6 @@ public class CheckoutSolution {
     }
   }
 }
+
 
 
