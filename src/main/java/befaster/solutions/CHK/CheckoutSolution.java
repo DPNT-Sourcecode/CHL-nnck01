@@ -35,116 +35,102 @@ public class CheckoutSolution {
   public Integer checkout(String skus) {
     if (skus == null) return -1;
 
-    final char[] letters = skus.toCharArray();
+    final char[] items = skus.toCharArray();
 
-    final Map<Character, Integer> lettersCount = new HashMap<>();
-    for (char letter : letters) {
-      if (!validLetter(letter)) return -1;
+    final Map<Character, Integer> itemsCount = new HashMap<>();
+    for (char item : items) {
+      if (!validItem(item)) return -1;
 
-      lettersCount.compute(letter, (l, count) -> {
+      itemsCount.compute(item, (l, count) -> {
         if (count == null) return 1;
 
         return count + 1;
       });
     }
 
-    int total = 0;
-    ItemsWithAmount current = ItemsWithAmount.by(0, lettersCount);
+    ItemsWithAmount current = ItemsWithAmount.by(0, itemsCount);
     for (final Offer offer : allOffers) current = offer.applyTo(current);
-
-//    for (final Map.Entry<Character, Integer> letterToCount : lettersCount.entrySet()) {
-//      final Character letter = letterToCount.getKey();
-//      final Integer count = letterToCount.getValue();
-//      final LetterCountWithCost withUsualCost = LetterCountWithCost.by(letter, count, count * usualCost.get(letter));
-//
-//      final List<Offer> specials = offers.getOrDefault(letter, emptyList());
-//
-//      LetterCountWithCost current = withUsualCost;
-//      for (final Offer offer : specials) current = offer.applyTo(current);
-//
-//      total += current.cost;
-//    }
 
     return current.amount;
   }
 
-  private static boolean validLetter(char c) {
+  private static boolean validItem(char c) {
     return 'A' <= c && c <= 'Z';
   }
 
   interface Offer {
-    ItemsCountWithCost toLetterCountWithCost();
+    ItemsCountWithCost toItemsCountWithCost();
 
-    ItemsWithAmount applyTo(ItemsWithAmount lettersWithAmount);
+    ItemsWithAmount applyTo(ItemsWithAmount itemsWithAmount);
 
     Offer times(int times);
   }
 
   private static final class UsualCost implements Offer {
-    final ItemCount letterCount;
+    final ItemCount letteCount;
     final int cost;
 
-    public UsualCost(ItemCount letterCount, int cost) {
-      this.letterCount = letterCount;
+    public UsualCost(ItemCount letteCount, int cost) {
+      this.letteCount = letteCount;
       this.cost = cost;
     }
 
-    static UsualCost by(ItemCount letter, int cost) {
-      return new UsualCost(letter, cost);
+    static UsualCost by(ItemCount itemCount, int cost) {
+      return new UsualCost(itemCount, cost);
     }
 
     @Override
-    public ItemsCountWithCost toLetterCountWithCost() {
-      return ItemsCountWithCost.by(letterCount.item, letterCount.count, cost);
+    public ItemsCountWithCost toItemsCountWithCost() {
+      return ItemsCountWithCost.by(letteCount.item, letteCount.count, cost);
     }
 
     @Override
-    public ItemsWithAmount applyTo(ItemsWithAmount lettersWithAmount) {
-      final Integer count = lettersWithAmount.itemsCount.getOrDefault(letterCount.item, 0);
-      if (count == 0) return lettersWithAmount;
+    public ItemsWithAmount applyTo(ItemsWithAmount itemsWithAmount) {
+      final Integer count = itemsWithAmount.itemsCount.getOrDefault(letteCount.item, 0);
+      if (count == 0) return itemsWithAmount;
 
-      return lettersWithAmount.minus(times(count).toLetterCountWithCost());
+      return itemsWithAmount.minus(times(count).toItemsCountWithCost());
     }
 
     @Override
     public Offer times(int times) {
-      return UsualCost.by(letterCount.times(times), cost * times);
+      return UsualCost.by(letteCount.times(times), cost * times);
     }
   }
 
   private static final class DiscountOffer implements Offer {
-    final ItemCount letterCount;
+    final ItemCount itemsCount;
     final int discount;
 
-    private DiscountOffer(ItemCount letterCount, int discount) {
-      this.letterCount = letterCount;
+    private DiscountOffer(ItemCount itemsCount, int discount) {
+      this.itemsCount = itemsCount;
       this.discount = discount;
     }
 
-    static DiscountOffer by(ItemCount letterCount, int discount) {
-      return new DiscountOffer(letterCount, discount);
+    static DiscountOffer by(ItemCount itemsCount, int discount) {
+      return new DiscountOffer(itemsCount, discount);
     }
 
     @Override
-    public ItemsCountWithCost toLetterCountWithCost() {
-      return ItemsCountWithCost.by(letterCount.item, letterCount.count, discount);
+    public ItemsCountWithCost toItemsCountWithCost() {
+      return ItemsCountWithCost.by(itemsCount.item, itemsCount.count, discount);
     }
 
     @Override
     public DiscountOffer times(int times) {
       return DiscountOffer.by(
-          ItemCount.by(letterCount.item, letterCount.count * times),
+          ItemCount.by(itemsCount.item, itemsCount.count * times),
           discount * times
       );
     }
 
     @Override
-    public ItemsWithAmount applyTo(ItemsWithAmount lettersWithAmount) {
-      final Integer count = lettersWithAmount.itemsCount.get(letterCount.item);
-      if (count == null || count < letterCount.count) return lettersWithAmount;
+    public ItemsWithAmount applyTo(ItemsWithAmount itemsWithAmount) {
+      final Integer count = itemsWithAmount.itemsCount.get(itemsCount.item);
+      if (count == null || count < itemsCount.count) return itemsWithAmount;
 
-      int times = count / letterCount.count;
-      return lettersWithAmount.minus(times(times).toLetterCountWithCost());
+      int times = count / itemsCount.count;
+      return itemsWithAmount.minus(times(times).toItemsCountWithCost());
     }
   }
 
@@ -157,11 +143,11 @@ public class CheckoutSolution {
       this.extraItemsWithCost = extraItemsWithCost;
     }
 
-    static ExtraItemOffer by(ItemsCountWithCost letterCount, ItemsCountWithCost extraItems) {
-      return new ExtraItemOffer(letterCount, extraItems);
+    static ExtraItemOffer by(ItemsCountWithCost itemsCountWithCost, ItemsCountWithCost extraItems) {
+      return new ExtraItemOffer(itemsCountWithCost, extraItems);
     }
 
-    public ItemsCountWithCost toLetterCountWithCost() {
+    public ItemsCountWithCost toItemsCountWithCost() {
       return ItemsCountWithCost.by(itemsCountWithCost.item, itemsCountWithCost.count, itemsCountWithCost.cost);
     }
 
@@ -174,17 +160,17 @@ public class CheckoutSolution {
     }
 
     @Override
-    public ItemsWithAmount applyTo(ItemsWithAmount lettersWithAmount) {
-      final Integer count = lettersWithAmount.itemsCount.getOrDefault(itemsCountWithCost.item, 0);
-      if (count == null || count < itemsCountWithCost.count) return lettersWithAmount;
+    public ItemsWithAmount applyTo(ItemsWithAmount itemsWithAmount) {
+      final Integer count = itemsWithAmount.itemsCount.getOrDefault(itemsCountWithCost.item, 0);
+      if (count == null || count < itemsCountWithCost.count) return itemsWithAmount;
 
       int times = count / itemsCountWithCost.count;
 
-      return lettersWithAmount
+      return itemsWithAmount
           .minus(
               ImmutableList.of(
-                extraItemsWithCost.toLetterCount().times(times),
-                itemsCountWithCost.toLetterCount().times(times)
+                extraItemsWithCost.toItemsCount().times(times),
+                itemsCountWithCost.toItemsCount().times(times)
               )
           )
           .plus(itemsCountWithCost.cost * times);
@@ -200,17 +186,17 @@ public class CheckoutSolution {
       this.itemsCount = itemsCount;
     }
 
-    ItemsWithAmount minus(ItemsCountWithCost letterCountWithCost) {
-      final char item = letterCountWithCost.item;
-      final int letterCount = letterCountWithCost.count;
+    ItemsWithAmount minus(ItemsCountWithCost itemsCountWithCost) {
+      final char item = itemsCountWithCost.item;
+      final int itemsCount = itemsCountWithCost.count;
 
-      final Integer count = itemsCount.getOrDefault(item, 0);
-      if (count < letterCount)
-        throw new IllegalArgumentException("Can not subtract LetterCountWithCost: " + letterCountWithCost);
+      final Integer count = this.itemsCount.getOrDefault(item, 0);
+      if (count < itemsCount)
+        throw new IllegalArgumentException("Can not subtract ItemCountWithCost: " + itemsCountWithCost);
 
-      final Map<Character, Integer> newLettersCount = new HashMap<>(itemsCount);
-      newLettersCount.put(item, count - letterCount);
-      return new ItemsWithAmount(amount + letterCountWithCost.cost, newLettersCount);
+      final Map<Character, Integer> newItemsCount = new HashMap<>(this.itemsCount);
+      newItemsCount.put(item, count - itemsCount);
+      return new ItemsWithAmount(amount + itemsCountWithCost.cost, newItemsCount);
     }
 
     ItemsWithAmount minus(Map<Character, Integer> minusItemsCount) {
@@ -227,10 +213,10 @@ public class CheckoutSolution {
       return ItemsWithAmount.by(amount, newItemsCount);
     }
 
-    ItemsWithAmount minus(Collection<ItemCount> minusLetters) {
-      final Map<Character, Integer> itemsCount = minusLetters
+    ItemsWithAmount minus(Collection<ItemCount> minusItems) {
+      final Map<Character, Integer> itemsCount = minusItems
           .stream()
-          .collect(groupingBy(letterCount -> letterCount.item, summingInt(lettersCount -> lettersCount.count)));
+          .collect(groupingBy(itemCount -> itemCount.item, summingInt(itemCount -> itemCount.count)));
       return minus(itemsCount);
     }
 
@@ -242,13 +228,13 @@ public class CheckoutSolution {
       return ItemsWithAmount.by(this.amount + amount, itemsCount);
     }
 
-    ItemsWithAmount minus(ItemsWithAmount lettersWithAmount) {
-      return minus(lettersWithAmount.itemsCount)
+    ItemsWithAmount minus(ItemsWithAmount itemsWithAmount) {
+      return minus(itemsWithAmount.itemsCount)
           .minus(amount);
     }
 
-    static ItemsWithAmount by(int amount, Map<Character, Integer> lettersCount) {
-      return new ItemsWithAmount(amount, lettersCount);
+    static ItemsWithAmount by(int amount, Map<Character, Integer> itemsCount) {
+      return new ItemsWithAmount(amount, itemsCount);
     }
   }
 
@@ -271,9 +257,9 @@ public class CheckoutSolution {
 
     @Override
     public String toString() {
-      return "LetterCount{" +
+      return "ItemCount{" +
           "count=" + count +
-          ", letter=" + item +
+          ", item=" + item +
           '}';
     }
   }
@@ -289,7 +275,7 @@ public class CheckoutSolution {
       this.cost = cost;
     }
 
-    ItemCount toLetterCount() {
+    ItemCount toItemsCount() {
       return ItemCount.by(item, count);
     }
 
@@ -303,7 +289,7 @@ public class CheckoutSolution {
 
     @Override
     public String toString() {
-      return "LetterCountWithCost{" +
+      return "ItemCountWithCost{" +
           "item=" + item +
           ", count=" + count +
           ", cost=" + cost +
@@ -319,3 +305,4 @@ public class CheckoutSolution {
     }
   }
 }
+
