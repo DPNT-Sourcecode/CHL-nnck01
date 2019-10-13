@@ -123,7 +123,7 @@ public class SkuTableParser {
   }
 
   public static void main(String[] args) {
-    System.out.println(new SkuTableParser()
+    new SkuTableParser()
         .parse("+------+-------+------------------------+\n" +
             "| Item | Price | Special offers         |\n" +
             "+------+-------+------------------------+\n" +
@@ -153,8 +153,10 @@ public class SkuTableParser {
             "| X    | 90    |                        |\n" +
             "| Y    | 10    |                        |\n" +
             "| Z    | 50    |                        |\n" +
-            "+------+-------+------------------------+"));
+            "+------+-------+------------------------+")
+    .forEach(System.out::println);
   }
 
 }
+
 
