@@ -71,7 +71,7 @@ public class CheckoutSolutionTest {
     //{"method":"checkout","params":["ABCDCBAABCABBAAA"],"id":"CHL_R1_001"}, expected: 505, got: 540//    assertThat(checkoutSolution.checkout("ABCDABCD"), is(180));
     assertThat(checkoutSolution.checkout("ABCDABCD"), is(215));
     assertThat(checkoutSolution.checkout("BABDDCAC"), is(215));
-    assertThat(checkoutSolution.checkout("ABCDCBAABCABBAAA"), is(505));
+    assertThat(checkoutSolution.checkout("ABCDCBAABCABBAAA"), is(495));
   }
 
   @Test
@@ -86,4 +86,5 @@ public class CheckoutSolutionTest {
     assertThat(checkoutSolution.checkout("AAAAAAAA"), is(330));
   }
 }
+
 

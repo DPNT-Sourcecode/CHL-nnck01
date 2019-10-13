@@ -46,7 +46,7 @@ public class CheckoutSolution {
 //          UsualCost.by('A', 50)
       ),
       'B', ImmutableList.of(
-          DiscountOffer.by(LetterCount.by(2, 'B'), 45)
+          DiscountOffer.by(LetterCount.by(2, 'B'), 15)
 //          UsualCost.by('B', 30)
       ),
       'C', ImmutableList.of(
@@ -330,6 +330,7 @@ public class CheckoutSolution {
     }
   }
 }
+
 
 
 
