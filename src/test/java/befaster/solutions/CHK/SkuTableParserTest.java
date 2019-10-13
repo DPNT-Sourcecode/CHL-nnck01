@@ -2,6 +2,7 @@ package befaster.solutions.CHK;
 
 import org.junit.Test;
 
+import static befaster.solutions.CHK.Offer.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
@@ -43,7 +44,8 @@ public class SkuTableParserTest {
             "+------+-------+------------------------+\n" +
             "| C    | 20    |                        |\n" +
             "+------+-------+------------------------+"
-    ), hasItem(new Offer.UsualCost(ItemCount.by('C', 1), 20)));
+    ), hasItem(UsualCost.by(ItemCount.by('C', 1), 20)));
   }
 
 }
+

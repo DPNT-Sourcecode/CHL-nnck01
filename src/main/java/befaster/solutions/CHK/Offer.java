@@ -2,6 +2,8 @@ package befaster.solutions.CHK;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.Objects;
+
 interface Offer {
   ItemsCountWithCost toItemsCountWithCost();
 
@@ -13,7 +15,7 @@ interface Offer {
     public final ItemCount letteCount;
     public final int cost;
 
-    public UsualCost(ItemCount letteCount, int cost) {
+    private UsualCost(ItemCount letteCount, int cost) {
       this.letteCount = letteCount;
       this.cost = cost;
     }
@@ -38,6 +40,20 @@ interface Offer {
     @Override
     public Offer times(int times) {
       return UsualCost.by(letteCount.times(times), cost * times);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (!(o instanceof UsualCost)) return false;
+      UsualCost usualCost = (UsualCost) o;
+      return cost == usualCost.cost &&
+          Objects.equals(letteCount, usualCost.letteCount);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(letteCount, cost);
     }
   }
 
@@ -74,6 +90,20 @@ interface Offer {
 
     public static DiscountOffer by(ItemCount itemsCount, int discount) {
       return new DiscountOffer(itemsCount, discount);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (!(o instanceof DiscountOffer)) return false;
+      DiscountOffer that = (DiscountOffer) o;
+      return discount == that.discount &&
+          Objects.equals(itemsCount, that.itemsCount);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(itemsCount, discount);
     }
   }
 
@@ -118,6 +148,20 @@ interface Offer {
     public static ExtraItemOffer by(ItemsCountWithCost itemsCountWithCost, ItemsCountWithCost extraItems) {
       return new ExtraItemOffer(itemsCountWithCost, extraItems);
     }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (!(o instanceof ExtraItemOffer)) return false;
+      ExtraItemOffer that = (ExtraItemOffer) o;
+      return Objects.equals(itemsCountWithCost, that.itemsCountWithCost) &&
+          Objects.equals(extraItemsWithCost, that.extraItemsWithCost);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(itemsCountWithCost, extraItemsWithCost);
+    }
   }
 
   final class FreeItemOffer implements Offer {
@@ -161,5 +205,20 @@ interface Offer {
           )
           .plus(itemCountWithCost.cost * times);
     }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (!(o instanceof FreeItemOffer)) return false;
+      FreeItemOffer that = (FreeItemOffer) o;
+      return freeCount == that.freeCount &&
+          Objects.equals(itemCountWithCost, that.itemCountWithCost);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(itemCountWithCost, freeCount);
+    }
   }
 }
+
