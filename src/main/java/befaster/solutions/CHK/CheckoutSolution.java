@@ -260,7 +260,7 @@ public class CheckoutSolution {
 
     @Override
     public LettersWithAmount applyTo(LettersWithAmount lettersWithAmount) {
-      final Integer count = lettersWithAmount.lettersCount.get(letterCount.letter);
+      final Integer count = lettersWithAmount.lettersCount.getOrDefault(letterCount.letter, 0);
       if (count == null || count < letterCount.count) return lettersWithAmount;
 
       int times = count / letterCount.count;
@@ -350,4 +350,5 @@ public class CheckoutSolution {
     }
   }
 }
+
 
