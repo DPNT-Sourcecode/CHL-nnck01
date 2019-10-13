@@ -83,6 +83,7 @@ public class CheckoutSolutionTest {
     assertThat(checkoutSolution.checkout("FF"), is(20));
     assertThat(checkoutSolution.checkout("FFF"), is(20));
     assertThat(checkoutSolution.checkout("FFFFFF"), is(40));
+    assertThat(checkoutSolution.checkout("VVVVV"), is(220));
   }
 
   @Test
@@ -91,3 +92,4 @@ public class CheckoutSolutionTest {
     assertThat(checkoutSolution.checkout("AAAAAAAA"), is(330));
   }
 }
+

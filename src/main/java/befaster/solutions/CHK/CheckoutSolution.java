@@ -1,32 +1,44 @@
 package befaster.solutions.CHK;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CheckoutSolution {
 
-  private final List<Offer> allOffers = ImmutableList.of(
-      Offer.FreeItemOffer.by(
-          ItemsCountWithCost.by('F', 2, 20),
-          1
-      ),
-      Offer.ExtraItemOffer.by(
-          ItemsCountWithCost.by('E', 2, 80),
-          ItemsCountWithCost.by('B', 1, 0)
-      ),
-      Offer.DiscountOffer.by(ItemCount.by('A', 5), 200),
-      Offer.DiscountOffer.by(ItemCount.by('A', 3), 130),
-      Offer.DiscountOffer.by(ItemCount.by('B', 2), 45),
-      Offer.UsualCost.by(ItemCount.by('A', 1), 50),
-      Offer.UsualCost.by(ItemCount.by('B', 1), 30),
-      Offer.UsualCost.by(ItemCount.by('C', 1), 20),
-      Offer.UsualCost.by(ItemCount.by('D', 1), 15),
-      Offer.UsualCost.by(ItemCount.by('E', 1), 40),
-      Offer.UsualCost.by(ItemCount.by('F', 1), 10)
-  );
+  private final List<Offer> allOffers = new SkuTableParser()
+      .parse(
+          "+------+-------+------------------------+\n" +
+          "| Item | Price | Special offers         |\n" +
+          "+------+-------+------------------------+\n" +
+          "| A    | 50    | 3A for 130, 5A for 200 |\n" +
+          "| B    | 30    | 2B for 45              |\n" +
+          "| C    | 20    |                        |\n" +
+          "| D    | 15    |                        |\n" +
+          "| E    | 40    | 2E get one B free      |\n" +
+          "| F    | 10    | 2F get one F free      |\n" +
+          "| G    | 20    |                        |\n" +
+          "| H    | 10    | 5H for 45, 10H for 80  |\n" +
+          "| I    | 35    |                        |\n" +
+          "| J    | 60    |                        |\n" +
+          "| K    | 80    | 2K for 150             |\n" +
+          "| L    | 90    |                        |\n" +
+          "| M    | 15    |                        |\n" +
+          "| N    | 40    | 3N get one M free      |\n" +
+          "| O    | 10    |                        |\n" +
+          "| P    | 50    | 5P for 200             |\n" +
+          "| Q    | 30    | 3Q for 80              |\n" +
+          "| R    | 50    | 3R get one Q free      |\n" +
+          "| S    | 30    |                        |\n" +
+          "| T    | 20    |                        |\n" +
+          "| U    | 40    | 3U get one U free      |\n" +
+          "| V    | 50    | 2V for 90, 3V for 130  |\n" +
+          "| W    | 20    |                        |\n" +
+          "| X    | 90    |                        |\n" +
+          "| Y    | 10    |                        |\n" +
+          "| Z    | 50    |                        |\n" +
+          "+------+-------+------------------------+"
+      );
 
   public Integer checkout(String skus) {
     if (skus == null) return -1;
@@ -55,3 +67,4 @@ public class CheckoutSolution {
   }
 
 }
+
