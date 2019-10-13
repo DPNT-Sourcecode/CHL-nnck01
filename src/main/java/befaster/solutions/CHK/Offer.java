@@ -11,7 +11,7 @@ interface Offer {
 
   Offer times(int times);
 
-  final class UsualCost implements Offer {
+  final class UsualCost implements Offer, Comparable<UsualCost>{
     public final ItemCount letteCount;
     public final int cost;
 
@@ -40,6 +40,11 @@ interface Offer {
     @Override
     public Offer times(int times) {
       return UsualCost.by(letteCount.times(times), cost * times);
+    }
+
+    @Override
+    public int compareTo(UsualCost o) {
+      return 0;
     }
 
     @Override
@@ -131,8 +136,8 @@ interface Offer {
   }
 
   final class ExtraItemOffer implements Offer, Comparable<ExtraItemOffer> {
-    public final ItemsCountWithCost itemsCountWithCost;
-    public final ItemsCountWithCost extraItemsWithCost;
+    final ItemsCountWithCost itemsCountWithCost;
+    final ItemsCountWithCost extraItemsWithCost;
 
     private ExtraItemOffer(ItemsCountWithCost itemsCountWithCost, ItemsCountWithCost extraItemsWithCost) {
       this.itemsCountWithCost = itemsCountWithCost;
@@ -169,8 +174,11 @@ interface Offer {
     }
 
     @Override
-    public int compareTo(ExtraItemOffer o) {
-      return 0;
+    public int compareTo(ExtraItemOffer other) {
+      if (itemsCountWithCost.item != other.itemsCountWithCost.item)
+        return itemsCountWithCost.item - other.itemsCountWithCost.item;
+
+      return itemsCountWithCost.count - other.itemsCountWithCost.count;
     }
 
     public static ExtraItemOffer by(ItemsCountWithCost itemsCountWithCost, ItemsCountWithCost extraItems) {
@@ -200,7 +208,7 @@ interface Offer {
     }
   }
 
-  final class FreeItemOffer implements Offer {
+  final class FreeItemOffer implements Offer, Comparable<FreeItemOffer> {
     public final ItemsCountWithCost itemCountWithCost;
     public final int freeCount;
 
@@ -243,6 +251,14 @@ interface Offer {
     }
 
     @Override
+    public int compareTo(FreeItemOffer other) {
+      if (itemCountWithCost.item != other.itemCountWithCost.item)
+        return itemCountWithCost.item - other.itemCountWithCost.item;
+
+      return itemCountWithCost.count - other.itemCountWithCost.count;
+    }
+
+    @Override
     public boolean equals(Object o) {
       if (this == o) return true;
       if (!(o instanceof FreeItemOffer)) return false;
@@ -265,6 +281,7 @@ interface Offer {
     }
   }
 }
+
 
 
 
