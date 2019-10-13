@@ -112,7 +112,7 @@ interface Offer {
     public int compareTo(DiscountOffer other) {
       if (itemsCount.item != other.itemsCount.item) return itemsCount.item - other.itemsCount.item;
 
-      return itemsCount.count - other.itemsCount.count;
+      return other.itemsCount.count - itemsCount.count;
     }
 
     @Override
@@ -181,7 +181,7 @@ interface Offer {
       if (itemsCountWithCost.item != other.itemsCountWithCost.item)
         return itemsCountWithCost.item - other.itemsCountWithCost.item;
 
-      return itemsCountWithCost.count - other.itemsCountWithCost.count;
+      return other.itemsCountWithCost.count - itemsCountWithCost.count;
     }
 
     public static ExtraItemOffer by(ItemsCountWithCost itemsCountWithCost, ItemsCountWithCost extraItems) {
@@ -258,7 +258,7 @@ interface Offer {
       if (itemCountWithCost.item != other.itemCountWithCost.item)
         return itemCountWithCost.item - other.itemCountWithCost.item;
 
-      return itemCountWithCost.count - other.itemCountWithCost.count;
+      return other.itemCountWithCost.count - itemCountWithCost.count;
     }
 
     @Override
@@ -284,4 +284,5 @@ interface Offer {
     }
   }
 }
+
 
