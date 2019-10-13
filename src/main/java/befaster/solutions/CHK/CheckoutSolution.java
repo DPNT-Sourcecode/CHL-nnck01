@@ -21,10 +21,6 @@ public class CheckoutSolution {
           ItemsCountWithCost.by('E', 2, 80),
           ItemsCountWithCost.by('B', 1, 0)
       ),
-      ExtraItemOffer.by(
-          ItemsCountWithCost.by('F', 2, 20),
-          ItemsCountWithCost.by('F', 1, 0)
-      ),
       DiscountOffer.by(ItemCount.by('A', 5), 200),
       DiscountOffer.by(ItemCount.by('A', 3), 130),
       DiscountOffer.by(ItemCount.by('B', 2), 45),
@@ -356,5 +352,6 @@ public class CheckoutSolution {
     }
   }
 }
+
 
 
