@@ -213,7 +213,7 @@ public class CheckoutSolution {
       return itemsWithAmount
           .minus(
               ImmutableList.of(
-                  itemCountWithCost.toItemsCount().plus(freeCount * times)
+                  itemCountWithCost.toItemsCount().times(times).plus(freeCount * times)
               )
           )
           .plus(itemCountWithCost.cost * times);
@@ -352,6 +352,7 @@ public class CheckoutSolution {
     }
   }
 }
+
 
 
 
