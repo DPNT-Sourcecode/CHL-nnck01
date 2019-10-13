@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.emptyList;
+
 public class CheckoutSolution {
 
   private final Map<Character, Integer> usualCost = ImmutableMap.of(
@@ -37,13 +39,7 @@ public class CheckoutSolution {
           )
   );
 
-  private final Map<Character, CountToCost> specialOffers = ImmutableMap.of(
-          'A', CountToCost.by(5, 200),
-//          'A', CountToCost.by(3, 130),
-          'B', CountToCost.by(2, 45)
-  );
-
-  private final Map<Character, List<SpecialOffer>> offers = ImmutableMap.of(
+  private final Map<Character, List<SpecialOffer>> specialOffers = ImmutableMap.of(
           'A', ImmutableList.of(
                   DiscountOffer.by(LetterCount.by(5, 'A'), 50),
                   DiscountOffer.by(LetterCount.by(3, 'A'), 20)
@@ -58,10 +54,6 @@ public class CheckoutSolution {
 
     final char[] letters = skus.toCharArray();
 
-    int total = 0;
-    char currentLetter = '_';
-    int currentLettersCount = 0;
-
     final Map<Character, Integer> lettersCount = new HashMap<>();
     for (char letter : letters) {
       if (!validLetter(letter)) return -1;
@@ -73,9 +65,18 @@ public class CheckoutSolution {
       });
     }
 
+    int total = 0;
     for (final Map.Entry<Character, Integer> letterToCount : lettersCount.entrySet()) {
-      final CountToCost countReminderToSpecialOffersSum = specialOffersSum(letterToCount.getKey(), letterToCount.getValue());
-      total += countReminderToSpecialOffersSum.cost + usualOffersSum(letterToCount.getKey(), countReminderToSpecialOffersSum.count);
+      final Character letter = letterToCount.getKey();
+      final Integer count = letterToCount.getValue();
+      final LetterCountWithCost costFor = LetterCountWithCost.by(letter, count, count * usualCost.get(letter));
+
+      final List<SpecialOffer> specials = specialOffers.getOrDefault(letter, emptyList());
+
+      specials.forEach(specialOffer -> specialOffer.);
+
+      final CountToCost countReminderToSpecialOffersSum = specialOffersSum(letter, count);
+      total += countReminderToSpecialOffersSum.cost + usualOffersSum(letter, countReminderToSpecialOffersSum.count);
     }
 
     return total;
@@ -101,6 +102,9 @@ public class CheckoutSolution {
     LetterCountWithCost toLetterCountWithCost();
 
     LettersWithAmount applyTo(LettersWithAmount lettersWithAmount);
+    LetterCountWithCost applyTo(LetterCountWithCost letterCountWithCost);
+
+    SpecialOffer times(int times);
   }
 
   private static final class DiscountOffer implements SpecialOffer {
@@ -121,11 +125,17 @@ public class CheckoutSolution {
       return LetterCountWithCost.by(letterCount.letter, letterCount.count, discount);
     }
 
+    @Override
     public DiscountOffer times(int times) {
       return DiscountOffer.by(
               LetterCount.by(letterCount.count * times, letterCount.letter),
               discount * times
       );
+    }
+
+    @Override
+    public LetterCountWithCost applyTo(LetterCountWithCost letterCountWithCost) {
+      return null;
     }
 
     @Override
@@ -155,6 +165,7 @@ public class CheckoutSolution {
       return LetterCountWithCost.by(letterCount.letter, letterCount.count, extraItems.cost);
     }
 
+    @Override
     public ExtraItemOffer times(int times) {
       return ExtraItemOffer.by(
               LetterCount.by(letterCount.count * times, letterCount.letter),
@@ -254,4 +265,5 @@ public class CheckoutSolution {
     }
   }
 }
+
 
