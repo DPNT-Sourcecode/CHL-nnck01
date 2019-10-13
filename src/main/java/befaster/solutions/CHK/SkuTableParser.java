@@ -48,15 +48,8 @@ public class SkuTableParser {
     final List<Offer> specialOffers = stream(specialOffersLine.split(","))
         .map(StringUtils::trim)
         .map(line -> {
-          if (line.contains("for")) {
-            return parseDiscountOffer(item, line);
-          }
-
-          if (line.contains("get one")) {
-            return parseExtraOrFreeOffer(item, usualOffer.cost, line);
-          }
-
-          return null;
+          if (line.contains("for")) return parseDiscountOffer(item, line);
+          else return parseExtraOrFreeOffer(item, usualOffer.cost, line);
         })
         .collect(toList());
 
@@ -72,6 +65,7 @@ public class SkuTableParser {
     final String specialPrice = discountLine[1].trim();
     return DiscountOffer.by(ItemCount.by(item, createInteger(count.substring(0, count.length() - 1))), createInteger(specialPrice));
   }
+
   private Offer parseExtraOrFreeOffer(char item, int price, String line) {
     final String[] offerLine = line.split("get one");
     final String countLine = offerLine[0].trim();
@@ -89,6 +83,7 @@ public class SkuTableParser {
     );
   }
 }
+
 
 
 

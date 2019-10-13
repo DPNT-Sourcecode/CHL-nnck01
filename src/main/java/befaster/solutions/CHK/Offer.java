@@ -67,23 +67,23 @@ interface Offer {
 
   final class DiscountOffer implements Offer {
     public final ItemCount itemsCount;
-    public final int discount;
+    public final int price;
 
-    private DiscountOffer(ItemCount itemsCount, int discount) {
+    private DiscountOffer(ItemCount itemsCount, int price) {
       this.itemsCount = itemsCount;
-      this.discount = discount;
+      this.price = price;
     }
 
     @Override
     public ItemsCountWithCost toItemsCountWithCost() {
-      return ItemsCountWithCost.by(itemsCount.item, itemsCount.count, discount);
+      return ItemsCountWithCost.by(itemsCount.item, itemsCount.count, price);
     }
 
     @Override
     public DiscountOffer times(int times) {
       return DiscountOffer.by(
           ItemCount.by(itemsCount.item, itemsCount.count * times),
-          discount * times
+          price * times
       );
     }
 
@@ -105,20 +105,20 @@ interface Offer {
       if (this == o) return true;
       if (!(o instanceof DiscountOffer)) return false;
       DiscountOffer that = (DiscountOffer) o;
-      return discount == that.discount &&
+      return price == that.price &&
           Objects.equals(itemsCount, that.itemsCount);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(itemsCount, discount);
+      return Objects.hash(itemsCount, price);
     }
 
     @Override
     public String toString() {
       return "DiscountOffer{" +
           "itemsCount=" + itemsCount +
-          ", discount=" + discount +
+          ", discount=" + price +
           '}';
     }
   }
@@ -255,4 +255,5 @@ interface Offer {
     }
   }
 }
+
 

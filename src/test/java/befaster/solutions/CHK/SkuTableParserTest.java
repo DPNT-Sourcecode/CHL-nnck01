@@ -93,6 +93,30 @@ public class SkuTableParserTest {
     ));
   }
 
+  @Test
+  public void shouldParseMultipleItems() {
+    final List<Offer> offers = skuTableParser.parse(
+        "+------+-------+------------------------+\n" +
+            "| Item | Price | Special offers         |\n" +
+            "+------+-------+------------------------+\n" +
+            "| V    | 50    | 2V for 90, 3V for 130  |\n" +
+            "+------+-------+------------------------+"
+    );
+    assertThat(offers.get(0), is(
+        DiscountOffer.by(
+            ItemCount.by('V', 2),
+            90
+        )
+    ));
+    assertThat(offers.get(1), is(
+        DiscountOffer.by(
+            ItemCount.by('V', 3),
+            130
+        )
+    ));
+  }
+
 }
+
 
 
