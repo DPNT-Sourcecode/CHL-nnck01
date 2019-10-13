@@ -39,12 +39,12 @@ public class CheckoutSolution {
 
   private final Map<Character, List<Offer>> offers = ImmutableMap.of(
       'A', ImmutableList.of(
-          DiscountOffer.by(LetterCount.by(5, 'A'), 50),
-          DiscountOffer.by(LetterCount.by(3, 'A'), 20)
+          DiscountOffer.by(LetterCount.by('A', 5), 50),
+          DiscountOffer.by(LetterCount.by('A', 3), 20)
 //          UsualCost.by('A', 50)
       ),
       'B', ImmutableList.of(
-          DiscountOffer.by(LetterCount.by(2, 'B'), 15)
+          DiscountOffer.by(LetterCount.by('B', 2), 15)
 //          UsualCost.by('B', 30)
       ),
       'C', ImmutableList.of(
@@ -64,14 +64,14 @@ public class CheckoutSolution {
           LetterCountWithCost.by('E', 2, 80),
           LetterCountWithCost.by('B', 1, 0)
       ),
-      DiscountOffer.by(LetterCount.by(5, 'A'), 50),
-      DiscountOffer.by(LetterCount.by(3, 'A'), 20),
-      DiscountOffer.by(LetterCount.by(2, 'B'), 15),
-      UsualCost.by('A', 50),
-      UsualCost.by('B', 30),
-      UsualCost.by('C', 20),
-      UsualCost.by('D', 15),
-      UsualCost.by('E', 40)
+      DiscountOffer.by(LetterCount.by('A', 5), 50),
+      DiscountOffer.by(LetterCount.by('A', 3), 20),
+      DiscountOffer.by(LetterCount.by('B', 2), 15),
+      UsualCost.by(LetterCount.by('A', 1), 50),
+      UsualCost.by(LetterCount.by('B', 1), 30),
+      UsualCost.by(LetterCount.by('C', 1), 20),
+      UsualCost.by(LetterCount.by('D', 1), 15),
+      UsualCost.by(LetterCount.by('E', 1), 40)
   );
 
   public Integer checkout(String skus) {
@@ -131,39 +131,42 @@ public class CheckoutSolution {
   }
 
   private static final class UsualCost implements Offer {
-    final Character letter;
+    final LetterCount letterCount;
     final int cost;
 
-    public UsualCost(Character letter, int cost) {
-      this.letter = letter;
+    public UsualCost(LetterCount letterCount, int cost) {
+      this.letterCount = letterCount;
       this.cost = cost;
     }
 
-    static UsualCost by(Character letter, int cost) {
+    static UsualCost by(LetterCount letter, int cost) {
       return new UsualCost(letter, cost);
     }
 
     @Override
     public LetterCountWithCost toLetterCountWithCost() {
-      return LetterCountWithCost.by(letter, 1, cost);
+      return LetterCountWithCost.by(letterCount.letter, letterCount.count, cost);
     }
 
     @Override
     public LetterCountWithCost applyTo(LetterCountWithCost other) {
-      if (letter != other.letter) return other;
+      if (letterCount.letter != other.letter) return other;
 
       int times = other.count;
-      return LetterCountWithCost.by(letter, 0, other.cost + times * cost);
+      return LetterCountWithCost.by(letterCount.letter, 0, other.cost + times * cost);
     }
 
     @Override
     public LettersWithAmount applyTo(LettersWithAmount lettersWithAmount) {
-      return null;
+      final Integer count = lettersWithAmount.lettersCount.getOrDefault(letterCount, 0);
+      if (count == 0) return lettersWithAmount;
+
+      return lettersWithAmount.minus(times(count).toLetterCountWithCost());
     }
 
     @Override
     public Offer times(int times) {
-      return null;
+      return UsualCost.by(letterCount.times(times), cost * times);
     }
   }
 
@@ -188,7 +191,7 @@ public class CheckoutSolution {
     @Override
     public DiscountOffer times(int times) {
       return DiscountOffer.by(
-          LetterCount.by(letterCount.count * times, letterCount.letter),
+          LetterCount.by(letterCount.letter, letterCount.count * times),
           discount * times
       );
     }
@@ -299,13 +302,17 @@ public class CheckoutSolution {
     final int count;
     final char letter;
 
-    private LetterCount(int count, char letter) {
+    private LetterCount(char letter, int count) {
       this.count = count;
       this.letter = letter;
     }
 
-    static LetterCount by(int count, char letter) {
-      return new LetterCount(count, letter);
+    LetterCount times(int times) {
+      return LetterCount.by(letter, count * times);
+    }
+
+    static LetterCount by(char letter, int count) {
+      return new LetterCount(letter, count);
     }
   }
 
@@ -347,5 +354,6 @@ public class CheckoutSolution {
     }
   }
 }
+
 
 
