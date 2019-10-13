@@ -12,41 +12,41 @@ import static java.util.Collections.emptyList;
 public class CheckoutSolution {
 
   private final Map<Character, Integer> usualCost = ImmutableMap.of(
-          'A', 50,
-          'B', 30,
-          'C', 20,
-          'D', 15,
-          'E', 40
+      'A', 50,
+      'B', 30,
+      'C', 20,
+      'D', 15,
+      'E', 40
   );
 
   private final Map<Character, List<LetterCountWithCost>> skus = ImmutableMap.of(
-          'A', ImmutableList.of(
-                  LetterCountWithCost.by('A', 5, 200),
-                  LetterCountWithCost.by('A', 3, 130),
-                  LetterCountWithCost.by('A', 1, 50)
-          ),
-          'B', ImmutableList.of(
-                  LetterCountWithCost.by('B', 1, 30)
-          ),
-          'C', ImmutableList.of(
-                  LetterCountWithCost.by('C', 1, 20)
-          ),
-          'D', ImmutableList.of(
-                  LetterCountWithCost.by('D', 1, 15)
-          ),
-          'E', ImmutableList.of(
-                  LetterCountWithCost.by('E', 1, 40)
-          )
+      'A', ImmutableList.of(
+          LetterCountWithCost.by('A', 5, 200),
+          LetterCountWithCost.by('A', 3, 130),
+          LetterCountWithCost.by('A', 1, 50)
+      ),
+      'B', ImmutableList.of(
+          LetterCountWithCost.by('B', 1, 30)
+      ),
+      'C', ImmutableList.of(
+          LetterCountWithCost.by('C', 1, 20)
+      ),
+      'D', ImmutableList.of(
+          LetterCountWithCost.by('D', 1, 15)
+      ),
+      'E', ImmutableList.of(
+          LetterCountWithCost.by('E', 1, 40)
+      )
   );
 
   private final Map<Character, List<SpecialOffer>> specialOffers = ImmutableMap.of(
-          'A', ImmutableList.of(
-                  DiscountOffer.by(LetterCount.by(5, 'A'), 50),
-                  DiscountOffer.by(LetterCount.by(3, 'A'), 20)
-          ),
-          'E', ImmutableList.of(
-                  ExtraItemOffer.by(LetterCount.by(2, 'E'), LetterCountWithCost.by('B', 1, usualCost.get('B')))
-          )
+      'A', ImmutableList.of(
+          DiscountOffer.by(LetterCount.by(5, 'A'), 50),
+          DiscountOffer.by(LetterCount.by(3, 'A'), 20)
+      ),
+      'E', ImmutableList.of(
+          ExtraItemOffer.by(LetterCount.by(2, 'E'), LetterCountWithCost.by('B', 1, usualCost.get('B')))
+      )
   );
 
   public Integer checkout(String skus) {
@@ -69,14 +69,14 @@ public class CheckoutSolution {
     for (final Map.Entry<Character, Integer> letterToCount : lettersCount.entrySet()) {
       final Character letter = letterToCount.getKey();
       final Integer count = letterToCount.getValue();
-      final LetterCountWithCost costFor = LetterCountWithCost.by(letter, count, count * usualCost.get(letter));
+      final LetterCountWithCost withUsualCost = LetterCountWithCost.by(letter, count, count * usualCost.get(letter));
 
       final List<SpecialOffer> specials = specialOffers.getOrDefault(letter, emptyList());
 
-      specials.forEach(specialOffer -> specialOffer.);
+      specials
+          .stream()
+          .reduce(withUsualCost, ());
 
-      final CountToCost countReminderToSpecialOffersSum = specialOffersSum(letter, count);
-      total += countReminderToSpecialOffersSum.cost + usualOffersSum(letter, countReminderToSpecialOffersSum.count);
     }
 
     return total;
@@ -84,14 +84,6 @@ public class CheckoutSolution {
 
   private static boolean validLetter(char c) {
     return 'A' <= c && c <= 'Z';
-  }
-
-  private CountToCost specialOffersSum(char letter, int lettersCount) {
-    final CountToCost countToCost = specialOffers.get(letter);
-    if (countToCost == null) return CountToCost.by(lettersCount, 0);
-
-    final int specialOfferCost = (lettersCount / countToCost.count) * countToCost.cost;
-    return CountToCost.by(lettersCount % countToCost.count, specialOfferCost);
   }
 
   private int usualOffersSum(char letter, int lettersCount) {
@@ -135,8 +127,8 @@ public class CheckoutSolution {
     @Override
     public DiscountOffer times(int times) {
       return DiscountOffer.by(
-              LetterCount.by(letterCount.count * times, letterCount.letter),
-              discount * times
+          LetterCount.by(letterCount.count * times, letterCount.letter),
+          discount * times
       );
     }
 
@@ -147,9 +139,9 @@ public class CheckoutSolution {
 
       int times = letterCountWithCost.count / letterCount.count;
       return LetterCountWithCost.by(
-              letterCountWithCost.letter,
-              letterCountWithCost.count % letterCount.count,
-              letterCountWithCost.cost - discount * times
+          letterCountWithCost.letter,
+          letterCountWithCost.count % letterCount.count,
+          letterCountWithCost.cost - discount * times
       );
     }
 
@@ -183,8 +175,8 @@ public class CheckoutSolution {
     @Override
     public ExtraItemOffer times(int times) {
       return ExtraItemOffer.by(
-              LetterCount.by(letterCount.count * times, letterCount.letter),
-              LetterCountWithCost.by(extraItems.letter, extraItems.count * times, extraItems.cost * times)
+          LetterCount.by(letterCount.count * times, letterCount.letter),
+          LetterCountWithCost.by(extraItems.letter, extraItems.count * times, extraItems.cost * times)
       );
     }
 
@@ -195,9 +187,9 @@ public class CheckoutSolution {
 
       int times = letterCountWithCost.count / letterCount.count;
       return LetterCountWithCost.by(
-              letterCountWithCost.letter,
-              letterCountWithCost.count % letterCount.count,
-              letterCountWithCost.cost - discount * times
+          letterCountWithCost.letter,
+          letterCountWithCost.count % letterCount.count,
+          letterCountWithCost.cost - extraItems.cost * times
       );
     }
 
@@ -229,9 +221,9 @@ public class CheckoutSolution {
         throw new IllegalArgumentException("Can not subtract LetterCountWithCost: " + letterCountWithCost);
 
       final Map<Character, Integer> newLettersCount = ImmutableMap.<Character, Integer>builder()
-              .putAll(lettersCount)
-              .put(letter, count - letterCount)
-              .build();
+          .putAll(lettersCount)
+          .put(letter, count - letterCount)
+          .build();
 
       return new LettersWithAmount(amount - letterCountWithCost.cost, newLettersCount);
     }
@@ -293,4 +285,5 @@ public class CheckoutSolution {
     }
   }
 }
+
 
