@@ -285,11 +285,8 @@ public class CheckoutSolution {
       if (count < letterCount)
         throw new IllegalArgumentException("Can not subtract LetterCountWithCost: " + letterCountWithCost);
 
-      final Map<Character, Integer> newLettersCount = ImmutableMap.<Character, Integer>builder()
-          .putAll(lettersCount)
-          .put(letter, count - letterCount)
-          .build();
-
+      final Map<Character, Integer> newLettersCount = new HashMap<>(lettersCount);
+      newLettersCount.put(letter, count - letterCount);
       return new LettersWithAmount(amount - letterCountWithCost.cost, newLettersCount);
     }
 
@@ -350,3 +347,4 @@ public class CheckoutSolution {
     }
   }
 }
+
