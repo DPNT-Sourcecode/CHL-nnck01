@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Collections.emptyList;
-
 public class CheckoutSolution {
 
   private final Map<Character, Integer> usualCost = ImmutableMap.of(
@@ -61,6 +59,21 @@ public class CheckoutSolution {
       )
   );
 
+  private final List<Offer> allOffers = ImmutableList.of(
+      ExtraItemOffer.by(
+          LetterCount.by(2, 'E'),
+          LetterCountWithCost.by('B', 1, 0)
+      ),
+      DiscountOffer.by(LetterCount.by(5, 'A'), 50),
+      DiscountOffer.by(LetterCount.by(3, 'A'), 20),
+      DiscountOffer.by(LetterCount.by(2, 'B'), 15),
+      UsualCost.by('A', 50),
+      UsualCost.by('B', 30),
+      UsualCost.by('C', 20),
+      UsualCost.by('D', 15),
+      UsualCost.by('E', 40)
+  );
+
   public Integer checkout(String skus) {
     if (skus == null) return -1;
 
@@ -78,20 +91,23 @@ public class CheckoutSolution {
     }
 
     int total = 0;
-    for (final Map.Entry<Character, Integer> letterToCount : lettersCount.entrySet()) {
-      final Character letter = letterToCount.getKey();
-      final Integer count = letterToCount.getValue();
-      final LetterCountWithCost withUsualCost = LetterCountWithCost.by(letter, count, count * usualCost.get(letter));
+    LettersWithAmount current = LettersWithAmount.by(0, lettersCount);
+    for (final Offer offer : allOffers) current = offer.applyTo(current);
 
-      final List<Offer> specials = offers.getOrDefault(letter, emptyList());
+//    for (final Map.Entry<Character, Integer> letterToCount : lettersCount.entrySet()) {
+//      final Character letter = letterToCount.getKey();
+//      final Integer count = letterToCount.getValue();
+//      final LetterCountWithCost withUsualCost = LetterCountWithCost.by(letter, count, count * usualCost.get(letter));
+//
+//      final List<Offer> specials = offers.getOrDefault(letter, emptyList());
+//
+//      LetterCountWithCost current = withUsualCost;
+//      for (final Offer offer : specials) current = offer.applyTo(current);
+//
+//      total += current.cost;
+//    }
 
-      LetterCountWithCost current = withUsualCost;
-      for (final Offer offer : specials) current = offer.applyTo(current);
-
-      total += current.cost;
-    }
-
-    return total;
+    return current.amount;
   }
 
   private static boolean validLetter(char c) {
@@ -221,7 +237,11 @@ public class CheckoutSolution {
     public ExtraItemOffer times(int times) {
       return ExtraItemOffer.by(
           LetterCount.by(letterCount.count * times, letterCount.letter),
-          LetterCountWithCost.by(extraItems.letter, extraItems.count * times, extraItems.cost * times)
+          LetterCountWithCost.by(
+              extraItems.letter,
+              extraItems.count * times,
+              extraItems.cost * times
+          )
       );
     }
 
@@ -234,7 +254,7 @@ public class CheckoutSolution {
       return LetterCountWithCost.by(
           letterCountWithCost.letter,
           letterCountWithCost.count % letterCount.count,
-          letterCountWithCost.cost - extraItems.cost * times
+          letterCountWithCost.cost
       );
     }
 
@@ -330,3 +350,4 @@ public class CheckoutSolution {
     }
   }
 }
+
