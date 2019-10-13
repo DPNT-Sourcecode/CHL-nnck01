@@ -1,5 +1,7 @@
 package befaster.solutions.CHK;
 
+import java.util.Objects;
+
 public final class ItemsCountWithCost {
   public final char item;
   public final int count;
@@ -24,6 +26,21 @@ public final class ItemsCountWithCost {
   }
 
   @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof ItemsCountWithCost)) return false;
+    ItemsCountWithCost that = (ItemsCountWithCost) o;
+    return item == that.item &&
+        count == that.count &&
+        cost == that.cost;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(item, count, cost);
+  }
+
+  @Override
   public String toString() {
     return "ItemCountWithCost{" +
         "item=" + item +
@@ -32,3 +49,4 @@ public final class ItemsCountWithCost {
         '}';
   }
 }
+

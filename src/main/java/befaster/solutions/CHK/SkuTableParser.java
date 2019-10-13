@@ -81,7 +81,7 @@ public class SkuTableParser {
     final String[] offerLine = line.split("get one");
     final String countLine = offerLine[0].trim();
     final int count = createInteger(countLine.substring(0, countLine.length() - 1));
-    final char freeItem = offerLine[1].charAt(0);
+    final char freeItem = offerLine[1].trim().charAt(0);
 
     if (item == freeItem) return FreeItemOffer.by(
         ItemsCountWithCost.by(item, count, count * price),
@@ -94,4 +94,5 @@ public class SkuTableParser {
     );
   }
 }
+
 

@@ -3,6 +3,7 @@ package befaster.solutions.CHK;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.summingInt;
@@ -66,4 +67,19 @@ public final class ItemsWithAmount {
   public static ItemsWithAmount by(int amount, Map<Character, Integer> itemsCount) {
     return new ItemsWithAmount(amount, itemsCount);
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof ItemsWithAmount)) return false;
+    ItemsWithAmount that = (ItemsWithAmount) o;
+    return amount == that.amount &&
+        Objects.equals(itemsCount, that.itemsCount);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(amount, itemsCount);
+  }
 }
+

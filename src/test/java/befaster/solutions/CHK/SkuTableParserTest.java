@@ -6,8 +6,7 @@ import java.util.List;
 
 import static befaster.solutions.CHK.Offer.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 
 public class SkuTableParserTest {
 
@@ -71,7 +70,7 @@ public class SkuTableParserTest {
             "| N    | 40    | 3N get one M free      |\n" +
             "+------+-------+------------------------+"
     );
-    assertThat(offers, hasItem(ExtraItemOffer.by(
+    assertThat(offers.get(0), is(ExtraItemOffer.by(
         ItemsCountWithCost.by('N', 3, 120),
         ItemsCountWithCost.by('M', 1, 0)
     )));
@@ -86,7 +85,7 @@ public class SkuTableParserTest {
             "| U    | 40    | 3U get one U free      |\n" +
             "+------+-------+------------------------+"
     );
-    assertThat(offers, hasItem(
+    assertThat(offers.get(0), is(
         FreeItemOffer.by(
             ItemsCountWithCost.by('U', 3, 120),
             1
@@ -95,4 +94,5 @@ public class SkuTableParserTest {
   }
 
 }
+
 

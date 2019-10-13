@@ -55,6 +55,14 @@ interface Offer {
     public int hashCode() {
       return Objects.hash(letteCount, cost);
     }
+
+    @Override
+    public String toString() {
+      return "UsualCost{" +
+          "letteCount=" + letteCount +
+          ", cost=" + cost +
+          '}';
+    }
   }
 
   final class DiscountOffer implements Offer {
@@ -105,6 +113,14 @@ interface Offer {
     public int hashCode() {
       return Objects.hash(itemsCount, discount);
     }
+
+    @Override
+    public String toString() {
+      return "DiscountOffer{" +
+          "itemsCount=" + itemsCount +
+          ", discount=" + discount +
+          '}';
+    }
   }
 
   final class ExtraItemOffer implements Offer {
@@ -126,6 +142,8 @@ interface Offer {
           itemsCountWithCost.times(times),
           extraItemsWithCost.times(times)
       );
+
+
     }
 
     @Override
@@ -161,6 +179,14 @@ interface Offer {
     @Override
     public int hashCode() {
       return Objects.hash(itemsCountWithCost, extraItemsWithCost);
+    }
+
+    @Override
+    public String toString() {
+      return "ExtraItemOffer{" +
+          "itemsCountWithCost=" + itemsCountWithCost +
+          ", extraItemsWithCost=" + extraItemsWithCost +
+          '}';
     }
   }
 
@@ -219,5 +245,14 @@ interface Offer {
     public int hashCode() {
       return Objects.hash(itemCountWithCost, freeCount);
     }
+
+    @Override
+    public String toString() {
+      return "FreeItemOffer{" +
+          "itemCountWithCost=" + itemCountWithCost +
+          ", freeCount=" + freeCount +
+          '}';
+    }
   }
 }
+
