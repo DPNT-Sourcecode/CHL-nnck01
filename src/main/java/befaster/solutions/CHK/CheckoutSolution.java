@@ -13,6 +13,10 @@ import static java.util.stream.Collectors.summingInt;
 public class CheckoutSolution {
 
   private final List<Offer> allOffers = ImmutableList.of(
+      FreeItemOffer.by(
+          ItemsCountWithCost.by('F', 2, 20),
+          1
+      ),
       ExtraItemOffer.by(
           ItemsCountWithCost.by('E', 2, 80),
           ItemsCountWithCost.by('B', 1, 0)
@@ -169,11 +173,54 @@ public class CheckoutSolution {
       return itemsWithAmount
           .minus(
               ImmutableList.of(
-                extraItemsWithCost.toItemsCount().times(times),
-                itemsCountWithCost.toItemsCount().times(times)
+                  extraItemsWithCost.toItemsCount().times(times),
+                  itemsCountWithCost.toItemsCount().times(times)
               )
           )
           .plus(itemsCountWithCost.cost * times);
+    }
+  }
+
+  private static final class FreeItemOffer implements Offer {
+    final ItemsCountWithCost itemCountWithCost;
+    final int freeCount;
+
+    public FreeItemOffer(ItemsCountWithCost itemCountWithCost, int freeCount) {
+      this.itemCountWithCost = itemCountWithCost;
+      this.freeCount = freeCount;
+    }
+
+    static FreeItemOffer by(ItemsCountWithCost itemsCountWithCost, int freeCount) {
+      return new FreeItemOffer(itemsCountWithCost, freeCount);
+    }
+
+    public ItemsCountWithCost toItemsCountWithCost() {
+      return ItemsCountWithCost.by(itemCountWithCost.item, itemCountWithCost.count, itemCountWithCost.cost);
+    }
+
+    @Override
+    public FreeItemOffer times(int times) {
+      return FreeItemOffer.by(
+          itemCountWithCost.times(times),
+          freeCount * times
+      );
+    }
+
+    @Override
+    public ItemsWithAmount applyTo(ItemsWithAmount itemsWithAmount) {
+      final int totalItems = itemCountWithCost.count + freeCount;
+      final Integer count = itemsWithAmount.itemsCount.getOrDefault(itemCountWithCost.item, 0);
+      if (count == null || count < totalItems) return itemsWithAmount;
+
+      int times = count / totalItems;
+
+      return itemsWithAmount
+          .minus(
+              ImmutableList.of(
+                  itemCountWithCost.toItemsCount().plus(freeCount * times)
+              )
+          )
+          .plus(itemCountWithCost.cost * times);
     }
   }
 
@@ -251,6 +298,10 @@ public class CheckoutSolution {
       return ItemCount.by(item, count * times);
     }
 
+    ItemCount plus(int count) {
+      return ItemCount.by(item, this.count + count);
+    }
+
     static ItemCount by(char item, int count) {
       return new ItemCount(item, count);
     }
@@ -305,4 +356,5 @@ public class CheckoutSolution {
     }
   }
 }
+
 
