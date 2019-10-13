@@ -46,6 +46,7 @@ public class CheckoutSolution {
 //          UsualCost.by('A', 50)
       ),
       'B', ImmutableList.of(
+          DiscountOffer.by(LetterCount.by(2, 'B'), 45)
 //          UsualCost.by('B', 30)
       ),
       'C', ImmutableList.of(
@@ -178,7 +179,7 @@ public class CheckoutSolution {
 
     @Override
     public LetterCountWithCost applyTo(LetterCountWithCost letterCountWithCost) {
-      if (letterCount.letter != letterCountWithCost.letter || letterCount.count < letterCountWithCost.count)
+      if (letterCount.letter != letterCountWithCost.letter || letterCount.count > letterCountWithCost.count)
         return letterCountWithCost;
 
       int times = letterCountWithCost.count / letterCount.count;
@@ -226,7 +227,7 @@ public class CheckoutSolution {
 
     @Override
     public LetterCountWithCost applyTo(LetterCountWithCost letterCountWithCost) {
-      if (letterCount.letter != letterCountWithCost.letter || letterCount.count < letterCountWithCost.count)
+      if (letterCount.letter != letterCountWithCost.letter || letterCount.count > letterCountWithCost.count)
         return letterCountWithCost;
 
       int times = letterCountWithCost.count / letterCount.count;
@@ -329,6 +330,7 @@ public class CheckoutSolution {
     }
   }
 }
+
 
 
 
