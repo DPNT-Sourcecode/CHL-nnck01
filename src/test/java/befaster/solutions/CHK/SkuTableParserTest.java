@@ -11,22 +11,22 @@ public class SkuTableParserTest {
   private SkuTableParser skuTableParser = new SkuTableParser();
 
   @Test(expected = IllegalArgumentException.class)
-  void shouldFailfIfNull() {
+  public void shouldFailfIfNull() {
     skuTableParser.parse(null);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  void shouldFailIfEmpty() {
+  public void shouldFailIfEmpty() {
     skuTableParser.parse("");
   }
 
   @Test(expected = IllegalArgumentException.class)
-  void shouldFailIfNewLinesLessThan4() {
+  public void shouldFailIfNewLinesLessThan4() {
     skuTableParser.parse("\n\n");
   }
 
   @Test
-  void shouldTrimHeaderAndFooter() {
+  public void shouldTrimHeaderAndFooter() {
     assertThat(skuTableParser.parse(
         "+------+-------+------------------------+\n" +
             "| Item | Price | Special offers         |\n" +
@@ -36,7 +36,7 @@ public class SkuTableParserTest {
   }
 
   @Test
-  void shouldParseItemWithoutSpecialOffer() {
+  public void shouldParseItemWithoutSpecialOffer() {
     assertThat(skuTableParser.parse(
         "+------+-------+------------------------+\n" +
             "| Item | Price | Special offers         |\n" +
@@ -47,5 +47,3 @@ public class SkuTableParserTest {
   }
 
 }
-
-

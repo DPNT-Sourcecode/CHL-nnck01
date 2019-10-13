@@ -163,4 +163,3 @@ interface Offer {
     }
   }
 }
-

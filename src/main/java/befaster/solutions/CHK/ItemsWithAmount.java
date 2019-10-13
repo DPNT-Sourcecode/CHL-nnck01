@@ -67,4 +67,3 @@ public final class ItemsWithAmount {
     return new ItemsWithAmount(amount, itemsCount);
   }
 }
-
