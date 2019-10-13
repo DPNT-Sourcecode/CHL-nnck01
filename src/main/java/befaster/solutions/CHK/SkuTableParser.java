@@ -1,11 +1,14 @@
 package befaster.solutions.CHK;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.math.NumberUtils.*;
 
 public class SkuTableParser {
 
@@ -26,12 +29,15 @@ public class SkuTableParser {
 
     return lines.subList(3, lines.size() - 1)
         .stream()
-        .map(s -> s.split("|"))
+        .map(s -> s.split("\\|"))
         .map(this::parseOffer)
         .collect(toList());
   }
 
   private Offer parseOffer(String[] params) {
+    final char item = StringUtils.trim(params[1]).charAt(0);
+    final int price = createInteger(StringUtils.trim(params[2]));
     return null;
   }
 }
+
