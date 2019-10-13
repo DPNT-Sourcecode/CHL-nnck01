@@ -1,11 +1,13 @@
 package befaster.solutions.CHK;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static befaster.solutions.CHK.Offer.DiscountOffer;
 import static befaster.solutions.CHK.Offer.UsualCost;
@@ -74,7 +76,28 @@ public class SkuTableParser {
     final String specialPrice = discountLine[1].trim();
     return DiscountOffer.by(ItemCount.by(item, createInteger(count.substring(0, count.length() - 1))), createInteger(specialPrice));
   }
+  private DiscountOffer parseExtraOrFreeOffer(char item, String line) {
+    final String[] offerLine = line.split("get");
+    final String countLine = offerLine[0].trim();
+    final int count = createInteger(countLine.substring(0, countLine.length() - 1));
+    final char freeItem = offerLine[1].charAt(0);
+    return DiscountOffer.by(ItemCount.by(item, count), createInteger(specialPrice));
+  }
+
+  private Map<String, Integer> toDigit = ImmutableMap.of(
+      "one", 1,
+      "two", 2,
+      "three", 3,
+      "four", 4,
+      "five", 5,
+      "six", 6,
+      "seven", 7,
+      "eight", 8,
+      "nine", 9,
+      "two", 10
+  );
 }
+
 
 
 
